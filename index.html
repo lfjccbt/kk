@@ -557,7 +557,7 @@
                 <div class="folder-options">
                     <div class="folder-btn questions active" data-folder="questions">
                         <h4>📝 Questions</h4>
-                        <p>Upload to /questions/ folder</p>
+                        <p>Upload to /questions/ folder (keeps original filename)</p>
                     </div>
                     <div class="folder-btn answers" data-folder="answers">
                         <h4>✅ Answers</h4>
@@ -572,7 +572,7 @@
                     <div class="upload-icon">📂</div>
                     <h3>Click to Browse Files</h3>
                     <p>or drag and drop files here</p>
-                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files will be uploaded as 1.png, 2.png, etc. to /questions/ folder</p>
+                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files keep their original names (10.png stays 10.png)</p>
                 </div>
                 <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
                 <div class="file-list" id="fileList"></div>
@@ -617,19 +617,11 @@
         // ========== CONFIGURATION ==========
         const REPO_OWNER = 'lfjccbt';
         
-        // Map each class to its repo name
         const CLASS_REPO = {
-            "1D": "1D",
-            "1M": "1M", 
-            "1N": "1N",
-            "1E": "1E",
-            "2D": "2D",
-            "2M": "2M",
-            "2N": "2N",
-            "2E": "2E"
+            "1D": "1D", "1M": "1M", "1N": "1N", "1E": "1E",
+            "2D": "2D", "2M": "2M", "2N": "2N", "2E": "2E"
         };
         
-        // Google Drive Backup
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbz93UeEM0siHeoYUgf5l9w8wfvg4Z8RVz4Sr9Lh4iL84yR-kSqC4nrjKWIlabq-z-_-9Q/exec';
         const GOOGLE_DRIVE_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
         
@@ -644,7 +636,6 @@
         const saveTokenBtn = document.getElementById('saveTokenBtn');
         const tokenStatus = document.getElementById('tokenStatus');
         
-        // ========== TOKEN MANAGEMENT ==========
         if (githubToken) {
             tokenInput.value = githubToken;
             tokenStatus.textContent = '✓ Token saved';
@@ -658,20 +649,15 @@
                 githubToken = token;
                 tokenStatus.textContent = '✓ Token saved successfully!';
                 tokenStatus.style.color = '#10b981';
-                setTimeout(() => {
-                    tokenStatus.textContent = '';
-                }, 3000);
+                setTimeout(() => { tokenStatus.textContent = ''; }, 3000);
                 updateUploadButton();
             } else {
                 tokenStatus.textContent = '❌ Invalid token. Must start with ghp_';
                 tokenStatus.style.color = '#ef4444';
-                setTimeout(() => {
-                    tokenStatus.textContent = '';
-                }, 3000);
+                setTimeout(() => { tokenStatus.textContent = ''; }, 3000);
             }
         });
         
-        // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
             initializeDatePicker();
@@ -679,7 +665,6 @@
             updateUploadButton();
         });
         
-        // ========== DATE FUNCTIONS ==========
         function initializeDatePicker() {
             const dateInput = document.getElementById('selectedDate');
             const today = new Date();
@@ -703,10 +688,8 @@
             const notepadContainer = document.getElementById('notepadContainer');
             const selectedDate = document.getElementById('selectedDate').value;
             const shortDate = formatDateForDisplay(selectedDate);
-            
             const existingHeader = document.getElementById('printHeader');
             if (existingHeader) existingHeader.remove();
-            
             const printHeader = document.createElement('div');
             printHeader.id = 'printHeader';
             printHeader.className = 'print-header';
@@ -719,12 +702,8 @@
             const token = githubToken;
             if (!token) throw new Error('No GitHub token');
             
-            // Check if file exists
             const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
+                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
             });
             
             let sha = null;
@@ -733,13 +712,9 @@
                 sha = data.sha;
             }
             
-            // Upload file
             const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: `Upload ${filePath}`,
                     content: base64Content,
@@ -752,7 +727,6 @@
                 const error = await uploadRes.json();
                 throw new Error(`GitHub error: ${error.message || uploadRes.status}`);
             }
-            
             return true;
         }
         
@@ -784,10 +758,8 @@
                     this.classList.add('active');
                     selectedFolder = this.dataset.folder;
                     updateUI();
-                    
                     if (selectedFolder === 'answers') {
-                        const textarea = document.getElementById('notepadContent');
-                        textarea.value = '';
+                        document.getElementById('notepadContent').value = '';
                         updateAnswerCount();
                         updatePrintHeader();
                     }
@@ -801,86 +773,7 @@
             });
             
             const textarea = document.getElementById('notepadContent');
-            
-            textarea.addEventListener('keydown', function(e) {
-                if ([8, 9, 13, 16, 17, 18, 20, 27, 37, 38, 39, 40, 46].includes(e.keyCode)) {
-                    return true;
-                }
-                
-                const allowedKeys = /^[a-dA-D0-9]$/;
-                if (!allowedKeys.test(e.key) && e.key.length === 1) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            textarea.addEventListener('input', function(e) {
-                const cursorPos = textarea.selectionStart;
-                let value = textarea.value;
-                
-                value = value.toUpperCase();
-                value = value.replace(/[^ABCD0-9\n]/g, '');
-                
-                const textBeforeCursor = value.substring(0, cursorPos);
-                const linesBefore = textBeforeCursor.split('\n');
-                const currentLine = linesBefore[linesBefore.length - 1];
-                
-                const typedChar = e.data ? e.data.toUpperCase() : '';
-                if (/^[ABCD0-9]$/.test(typedChar)) {
-                    const charsInLine = currentLine.replace(/[^ABCD0-9]/g, '').length;
-                    
-                    if (charsInLine === 5) {
-                        const beforeText = value.substring(0, cursorPos);
-                        const afterText = value.substring(cursorPos);
-                        value = beforeText + '\n' + afterText;
-                        
-                        textarea.value = value;
-                        
-                        const newCursorPos = cursorPos + 1;
-                        setTimeout(() => {
-                            textarea.setSelectionRange(newCursorPos, newCursorPos);
-                        }, 0);
-                        
-                        updateAnswerCount();
-                        updateUploadButton();
-                        return;
-                    }
-                }
-                
-                const lines = value.split('\n');
-                let formattedLines = [];
-                
-                for (let line of lines) {
-                    if (line.length === 0) {
-                        formattedLines.push('');
-                        continue;
-                    }
-                    
-                    if (/^[ABCD0-9]+$/.test(line)) {
-                        for (let i = 0; i < line.length; i += 5) {
-                            const chunk = line.substring(i, i + 5);
-                            if (chunk) formattedLines.push(chunk);
-                        }
-                    } else {
-                        formattedLines.push(line);
-                    }
-                }
-                
-                const newValue = formattedLines.join('\n');
-                
-                if (newValue !== value) {
-                    textarea.value = newValue;
-                    
-                    let newCursorPos = cursorPos;
-                    if (newValue.length !== value.length) {
-                        newCursorPos = Math.max(0, Math.min(cursorPos, newValue.length));
-                    }
-                    
-                    setTimeout(() => {
-                        textarea.setSelectionRange(newCursorPos, newCursorPos);
-                    }, 0);
-                }
-                
+            textarea.addEventListener('input', function() {
                 updateAnswerCount();
                 updateUploadButton();
             });
@@ -910,24 +803,22 @@
                 notepadContainer.style.display = 'block';
                 questionSection.style.display = 'none';
                 uploadBtn.textContent = '📤 Upload Answer Key';
-                folderLabel.textContent = 'Type Answer Key Below (saves as answer-key.txt in repo root)';
+                folderLabel.textContent = 'Type Answer Key Below (saves as answer-key.txt)';
                 updatePrintHeader();
             } else {
                 notepadContainer.style.display = 'none';
                 questionSection.style.display = 'block';
                 uploadBtn.textContent = '📤 Upload Questions';
-                folderLabel.textContent = 'Select Question Images (saves to /questions/ folder)';
+                folderLabel.textContent = 'Select Question Images (keeps original filenames)';
             }
-            
             updateUploadButton();
         }
         
         function updateFileList() {
             const fileList = document.getElementById('fileList');
-            
             if (selectedFiles.length > 0) {
-                fileList.innerHTML = selectedFiles.map((file, index) => 
-                    `<div class="file-item">📄 ${index + 1}.png ← ${file.name} (${formatSize(file.size)})</div>`
+                fileList.innerHTML = selectedFiles.map(file => 
+                    `<div class="file-item">📄 ${file.name} (${formatSize(file.size)})</div>`
                 ).join('');
             } else {
                 fileList.innerHTML = '';
@@ -937,27 +828,22 @@
         function updateUploadButton() {
             const uploadBtn = document.getElementById('uploadBtn');
             const hasToken = githubToken && githubToken.startsWith('ghp_');
-            
             if (!hasToken) {
                 uploadBtn.disabled = true;
-                uploadBtn.title = 'Please save your GitHub token first';
                 return;
             }
-            
             if (selectedFolder === 'questions') {
                 uploadBtn.disabled = selectedFiles.length === 0;
             } else {
-                const content = document.getElementById('notepadContent').value.trim();
-                uploadBtn.disabled = content.length === 0;
+                uploadBtn.disabled = document.getElementById('notepadContent').value.trim().length === 0;
             }
         }
         
         function updateAnswerCount() {
             const content = document.getElementById('notepadContent').value;
             const letters = content.match(/[ABCD]/g) || [];
-            const numberSequences = content.match(/[0-9]+/g) || [];
-            const totalAnswers = letters.length + numberSequences.length;
-            document.getElementById('answerCount').textContent = totalAnswers;
+            const numbers = content.match(/[0-9]+/g) || [];
+            document.getElementById('answerCount').textContent = letters.length + numbers.length;
         }
         
         function showAcknowledgement(title, message, isSuccess) {
@@ -965,26 +851,11 @@
             const icon = document.getElementById('ackIcon');
             const ackTitle = document.getElementById('ackTitle');
             const ackMessage = document.getElementById('ackMessage');
-            
-            if (isSuccess) {
-                icon.textContent = '✅';
-                icon.style.color = '#10b981';
-                ackTitle.style.color = '#065f46';
-            } else {
-                icon.textContent = '❌';
-                icon.style.color = '#ef4444';
-                ackTitle.style.color = '#7f1d1d';
-            }
-            
+            icon.textContent = isSuccess ? '✅' : '❌';
             ackTitle.textContent = title;
             ackMessage.textContent = message;
             overlay.style.display = 'flex';
-            
-            setTimeout(() => {
-                if (overlay.style.display === 'flex') {
-                    closeAcknowledgement();
-                }
-            }, 5000);
+            setTimeout(() => closeAcknowledgement(), 5000);
         }
         
         function closeAcknowledgement() {
@@ -997,10 +868,9 @@
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
         
-        // ========== MAIN UPLOAD FUNCTIONS ==========
+        // ========== MAIN UPLOAD ==========
         async function startUpload() {
             const uploadBtn = document.getElementById('uploadBtn');
-            const originalText = uploadBtn.textContent;
             const progressContainer = document.getElementById('progressContainer');
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
@@ -1012,7 +882,7 @@
             
             const repoName = CLASS_REPO[selectedClass];
             if (!repoName) {
-                showAcknowledgement('Error', `No repository configured for class ${selectedClass}`, false);
+                showAcknowledgement('Error', `No repository for class ${selectedClass}`, false);
                 return;
             }
             
@@ -1027,11 +897,11 @@
                     await uploadAnswerKey(progressFill, progressText, repoName);
                 }
             } catch (error) {
-                showAcknowledgement('Upload Failed', `Error: ${error.message}`, false);
+                showAcknowledgement('Upload Failed', error.message, false);
             } finally {
                 progressContainer.style.display = 'none';
                 uploadBtn.disabled = false;
-                uploadBtn.textContent = originalText;
+                uploadBtn.textContent = '📤 Upload Files';
             }
         }
         
@@ -1039,60 +909,41 @@
             if (selectedFiles.length === 0) throw new Error('No files selected');
             
             let success = 0;
-            let failed = [];
-            
             for (let i = 0; i < selectedFiles.length; i++) {
                 const file = selectedFiles[i];
-                const questionNumber = i + 1;
-                const fileName = `${questionNumber}.png`;
-                const filePath = `questions/${fileName}`;
                 const percent = Math.round((i / selectedFiles.length) * 100);
                 progressFill.style.width = `${percent}%`;
                 progressFill.textContent = `${percent}%`;
-                progressText.textContent = `Uploading Q${questionNumber}... (${i+1}/${selectedFiles.length})`;
+                progressText.textContent = `Uploading ${file.name}... (${i+1}/${selectedFiles.length})`;
                 
-                try {
-                    const base64Content = await fileToBase64(file);
-                    await uploadToGitHub(repoName, filePath, base64Content);
-                    success++;
-                } catch (error) {
-                    failed.push(`Q${questionNumber}`);
-                    console.error(`Failed: Q${questionNumber}`, error);
-                }
+                const base64Content = await fileToBase64(file);
+                const filePath = `questions/${file.name}`;
+                await uploadToGitHub(repoName, filePath, base64Content);
+                success++;
             }
             
             progressFill.style.width = '100%';
-            progressFill.textContent = '100%';
-            
-            if (success === selectedFiles.length) {
-                showAcknowledgement('Upload Successful!', `✅ ${success} questions uploaded to ${selectedClass}/questions/\n📁 Files: 1.png to ${success}.png\n🔄 Exam will update in 1-2 minutes`, true);
-                selectedFiles = [];
-                document.getElementById('fileInput').value = '';
-                updateFileList();
-                updateUploadButton();
-            } else if (success > 0) {
-                showAcknowledgement('Partial Upload', `⚠️ ${success} uploaded, ${failed.length} failed\nFailed: ${failed.join(', ')}`, false);
-            } else {
-                throw new Error('Failed to upload any files');
-            }
+            showAcknowledgement('Upload Successful!', `✅ ${success} files uploaded to ${repoName}/questions/\n📁 Files keep original names\n🔄 Exam will update in 1-2 minutes`, true);
+            selectedFiles = [];
+            document.getElementById('fileInput').value = '';
+            updateFileList();
+            updateUploadButton();
         }
         
         async function uploadAnswerKey(progressFill, progressText, repoName) {
-            const className = selectedClass;
-            const textarea = document.getElementById('notepadContent');
-            let content = textarea.value.trim();
+            const content = document.getElementById('notepadContent').value.trim();
             const selectedDate = document.getElementById('selectedDate').value;
-            const section = selectedClass;
+            const [year, month, day] = selectedDate.split('-');
+            const shortDate = `${day}/${month}/${year.slice(-2)}`;
+            const filenameDate = `${day}-${month}-${year.slice(-2)}`;
             
-            if (content.length === 0) throw new Error('Answer key is empty');
+            if (!content) throw new Error('Answer key is empty');
             
             progressFill.style.width = '30%';
-            progressFill.textContent = '30%';
-            progressText.textContent = 'Processing answer key...';
+            progressText.textContent = 'Processing...';
             
-            const lines = content.split('\n').filter(line => line.trim() !== '');
+            const lines = content.split('\n').filter(l => l.trim() !== '');
             const tokens = [];
-            
             for (let line of lines) {
                 let i = 0;
                 while (i < line.length) {
@@ -1101,51 +952,29 @@
                         i++;
                     } else if (line[i].match(/[0-9]/)) {
                         let num = '';
-                        while (i < line.length && line[i].match(/[0-9]/)) {
-                            num += line[i];
-                            i++;
-                        }
+                        while (i < line.length && line[i].match(/[0-9]/)) num += line[i++];
                         tokens.push(num);
-                    } else {
-                        i++;
-                    }
+                    } else { i++; }
                 }
             }
             
-            const [year, month, day] = selectedDate.split('-');
-            const shortDate = `${day}/${month}/${year.slice(-2)}`;
-            const filenameDate = `${day}-${month}-${year.slice(-2)}`;
-            
-            let pdfContent = `LFJC ${section} - ${shortDate} KEY\n`;
-            pdfContent += `${'─'.repeat(50)}\n\n`;
-            
+            let pdfContent = `LFJC ${selectedClass} - ${shortDate} KEY\n${'─'.repeat(50)}\n\n`;
             let line = '';
             for (let i = 0; i < tokens.length; i++) {
                 line += `${i+1})${tokens[i]} `;
-                if ((i + 1) % 10 === 0) {
-                    pdfContent += line + '\n';
-                    line = '';
-                }
+                if ((i + 1) % 10 === 0) { pdfContent += line + '\n'; line = ''; }
             }
             if (line) pdfContent += line + '\n';
+            pdfContent += `\n${'─'.repeat(50)}\nTotal Questions: ${tokens.length}`;
             
-            pdfContent += `\n${'─'.repeat(50)}`;
-            pdfContent += `\nTotal Questions: ${tokens.length}`;
-            
-            const answerKeyContent = content;
-            const base64Content = btoa(unescape(encodeURIComponent(answerKeyContent)));
+            const base64Content = btoa(unescape(encodeURIComponent(content)));
             
             progressFill.style.width = '70%';
-            progressFill.textContent = '70%';
             progressText.textContent = 'Uploading to GitHub...';
-            
-            const filePath = `answer-key.txt`;
-            await uploadToGitHub(repoName, filePath, base64Content);
+            await uploadToGitHub(repoName, 'answer-key.txt', base64Content);
             
             progressFill.style.width = '90%';
-            progressFill.textContent = '90%';
-            progressText.textContent = 'Sending to Google Drive backup...';
-            
+            progressText.textContent = 'Sending to Google Drive...';
             try {
                 await fetch(GAS_URL, {
                     method: 'POST',
@@ -1158,21 +987,15 @@
                         date: selectedDate,
                         shortDate: shortDate,
                         filenameDate: filenameDate,
-                        section: section,
+                        section: selectedClass,
                         folderId: GOOGLE_DRIVE_FOLDER_ID
                     })
                 });
-                console.log('✅ Sent to Google Drive');
-            } catch (e) {
-                console.log('Google Drive backup optional:', e);
-            }
+            } catch(e) { console.log('Drive backup optional'); }
             
             progressFill.style.width = '100%';
-            progressFill.textContent = '100%';
-            
-            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Google Drive backup sent\n🔄 Exam will update in 1-2 minutes`, true);
-            
-            textarea.value = '';
+            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Google Drive backup sent`, true);
+            document.getElementById('notepadContent').value = '';
             updateAnswerCount();
             updateUploadButton();
         }
