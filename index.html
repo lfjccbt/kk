@@ -1068,20 +1068,17 @@
             progressFill.textContent = '90%';
             progressText.textContent = 'Sending to Google Drive backup...';
             
-            // SEND TO GOOGLE DRIVE
+            // ===== FIXED GOOGLE DRIVE CALL =====
+            // Your script expects: section, filenameDate, content, folderId
             try {
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        class: selectedClass,
-                        content: pdfContent,
-                        rawContent: content,
-                        date: selectedDate,
-                        shortDate: shortDate,
+                        section: selectedClass,
                         filenameDate: filenameDate,
-                        section: section,
+                        content: pdfContent,
                         folderId: GOOGLE_DRIVE_FOLDER_ID
                     })
                 });
@@ -1089,6 +1086,7 @@
             } catch (e) {
                 console.log('Google Drive backup optional:', e);
             }
+            // ===================================
             
             progressFill.style.width = '100%';
             progressFill.textContent = '100%';
