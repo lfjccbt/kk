@@ -513,7 +513,7 @@
     <div class="container">
         <div class="header">
             <h1>📚 LFJC Teacher Portal</h1>
-            <p>Upload questions and answer keys to class repos</p>
+            <p>Upload questions to /questions/ folder | Answer keys to repo root</p>
         </div>
         
         <div class="token-section">
@@ -557,24 +557,24 @@
                 <div class="folder-options">
                     <div class="folder-btn questions active" data-folder="questions">
                         <h4>📝 Questions</h4>
-                        <p>Upload question files (1.png, 2.png...)</p>
+                        <p>Upload to /questions/ folder</p>
                     </div>
                     <div class="folder-btn answers" data-folder="answers">
                         <h4>✅ Answers</h4>
-                        <p>Type and upload answer key (answer-key.txt)</p>
+                        <p>Upload to repo root as answer-key.txt</p>
                     </div>
                 </div>
             </div>
             
             <div class="upload-section" id="questionUploadSection">
-                <label id="folderLabel">Select Files for Questions</label>
+                <label id="folderLabel">Select Question Images</label>
                 <div class="upload-area" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">📂</div>
                     <h3>Click to Browse Files</h3>
                     <p>or drag and drop files here</p>
-                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files will be uploaded as 1.png, 2.png, etc. to the class repo</p>
+                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files will be uploaded as 1.png, 2.png, etc. to /questions/ folder</p>
                 </div>
-                <input type="file" id="fileInput" multiple style="display: none;">
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
                 <div class="file-list" id="fileList"></div>
             </div>
             
@@ -629,7 +629,7 @@
             "2E": "2E"
         };
         
-        // Google Drive Backup (optional)
+        // Google Drive Backup
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbz93UeEM0siHeoYUgf5l9w8wfvg4Z8RVz4Sr9Lh4iL84yR-kSqC4nrjKWIlabq-z-_-9Q/exec';
         const GOOGLE_DRIVE_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
         
@@ -714,12 +714,10 @@
             notepadContainer.insertBefore(printHeader, notepadContainer.firstChild);
         }
         
-        // ========== GITHUB UPLOAD (DIRECT WITH TOKEN) ==========
+        // ========== GITHUB UPLOAD ==========
         async function uploadToGitHub(repoName, filePath, base64Content) {
             const token = githubToken;
-            if (!token) {
-                throw new Error('No GitHub token. Please save your token first.');
-            }
+            if (!token) throw new Error('No GitHub token');
             
             // Check if file exists
             const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
@@ -912,13 +910,13 @@
                 notepadContainer.style.display = 'block';
                 questionSection.style.display = 'none';
                 uploadBtn.textContent = '📤 Upload Answer Key';
-                folderLabel.textContent = 'Type Answer Key Below (saves as answer-key.txt)';
+                folderLabel.textContent = 'Type Answer Key Below (saves as answer-key.txt in repo root)';
                 updatePrintHeader();
             } else {
                 notepadContainer.style.display = 'none';
                 questionSection.style.display = 'block';
                 uploadBtn.textContent = '📤 Upload Questions';
-                folderLabel.textContent = 'Select Question Images (1.png, 2.png...)';
+                folderLabel.textContent = 'Select Question Images (saves to /questions/ folder)';
             }
             
             updateUploadButton();
@@ -929,7 +927,7 @@
             
             if (selectedFiles.length > 0) {
                 fileList.innerHTML = selectedFiles.map((file, index) => 
-                    `<div class="file-item">📄 ${index + 1}.png (${formatSize(file.size)}) ← ${file.name}</div>`
+                    `<div class="file-item">📄 ${index + 1}.png ← ${file.name} (${formatSize(file.size)})</div>`
                 ).join('');
             } else {
                 fileList.innerHTML = '';
@@ -1047,14 +1045,15 @@
                 const file = selectedFiles[i];
                 const questionNumber = i + 1;
                 const fileName = `${questionNumber}.png`;
+                const filePath = `questions/${fileName}`;
                 const percent = Math.round((i / selectedFiles.length) * 100);
                 progressFill.style.width = `${percent}%`;
                 progressFill.textContent = `${percent}%`;
-                progressText.textContent = `Uploading Q${questionNumber} (${file.name})... (${i+1}/${selectedFiles.length})`;
+                progressText.textContent = `Uploading Q${questionNumber}... (${i+1}/${selectedFiles.length})`;
                 
                 try {
                     const base64Content = await fileToBase64(file);
-                    await uploadToGitHub(repoName, fileName, base64Content);
+                    await uploadToGitHub(repoName, filePath, base64Content);
                     success++;
                 } catch (error) {
                     failed.push(`Q${questionNumber}`);
@@ -1066,7 +1065,7 @@
             progressFill.textContent = '100%';
             
             if (success === selectedFiles.length) {
-                showAcknowledgement('Upload Successful!', `✅ ${success} questions uploaded to ${selectedClass} repo\n📁 Files: 1.png to ${success}.png\n🔄 Exam will update in 1-2 minutes`, true);
+                showAcknowledgement('Upload Successful!', `✅ ${success} questions uploaded to ${selectedClass}/questions/\n📁 Files: 1.png to ${success}.png\n🔄 Exam will update in 1-2 minutes`, true);
                 selectedFiles = [];
                 document.getElementById('fileInput').value = '';
                 updateFileList();
@@ -1133,7 +1132,6 @@
             pdfContent += `\n${'─'.repeat(50)}`;
             pdfContent += `\nTotal Questions: ${tokens.length}`;
             
-            // Format for answer-key.txt (plain text with 5 per row)
             const answerKeyContent = content;
             const base64Content = btoa(unescape(encodeURIComponent(answerKeyContent)));
             
@@ -1172,7 +1170,7 @@
             progressFill.style.width = '100%';
             progressFill.textContent = '100%';
             
-            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n🔄 Exam will update in 1-2 minutes`, true);
+            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Google Drive backup sent\n🔄 Exam will update in 1-2 minutes`, true);
             
             textarea.value = '';
             updateAnswerCount();
