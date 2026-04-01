@@ -510,6 +510,217 @@
     </style>
 </head>
 <body>
+    <!-- Admin Settings Panel (Hidden by default) -->
+<div id="adminSettingsPanel" style="display: none; background: white; border-bottom: 3px solid #4B0082; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="color: #4B0082;">⚙️ Exam Configuration Panel</h3>
+            <button id="closeAdminPanel" style="background: #dc3545; color: white; padding: 5px 15px;">✖ Close</button>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <!-- Duration Settings -->
+            <div>
+                <label style="font-weight: bold;">⏱️ Exam Duration (minutes)</label>
+                <input type="number" id="adminDuration" style="width: 100%; padding: 8px; margin-top: 5px; border: 2px solid #4B0082; border-radius: 5px;">
+                <small>Current: <span id="currentDuration">180</span> mins</small>
+            </div>
+            
+            <!-- Marks Settings -->
+            <div>
+                <label style="font-weight: bold;">📊 Marks per Correct Answer</label>
+                <input type="number" id="adminCorrectMark" step="0.5" style="width: 100%; padding: 8px; margin-top: 5px; border: 2px solid #4B0082; border-radius: 5px;">
+                <small>Current: <span id="currentCorrectMark">1</span> mark</small>
+            </div>
+            
+            <div>
+                <label style="font-weight: bold;">❌ Marks per Wrong Answer</label>
+                <input type="number" id="adminWrongMark" step="0.5" style="width: 100%; padding: 8px; margin-top: 5px; border: 2px solid #4B0082; border-radius: 5px;">
+                <small>Current: <span id="currentWrongMark">0</span> marks</small>
+            </div>
+        </div>
+        
+        <!-- Subjects Management -->
+        <div style="margin-top: 20px;">
+            <label style="font-weight: bold;">📚 Subjects & Question Counts</label>
+            <div id="subjectsList" style="margin-top: 10px;"></div>
+            <button id="addSubjectBtn" style="background: #28a745; color: white; margin-top: 10px; padding: 5px 15px;">+ Add Subject</button>
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="saveAdminSettings" style="background: #4B0082; color: white; padding: 10px 20px;">💾 Save & Apply Changes</button>
+            <button id="resetAdminSettings" style="background: #6c757d; color: white; padding: 10px 20px;">↺ Reset to Default</button>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Access Button -->
+<div id="adminAccessBtn" style="position: fixed; bottom: 20px; left: 20px; z-index: 9999;">
+    <button id="showAdminPanel" style="background: #4B0082; color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; opacity: 0.6;">🔧 Admin</button>
+</div>
+
+<script>
+// Admin Panel JavaScript
+(function() {
+    // Default settings
+    let adminSettings = {
+        duration: 180,
+        correctMark: 1,
+        wrongMark: 0,
+        subjects: [
+            { name: "MATHS", questions: 80, numerical: 0 },
+            { name: "PHYSICS", questions: 40, numerical: 0 },
+            { name: "CHEMISTRY", questions: 40, numerical: 0 }
+        ]
+    };
+    
+    // Load saved settings from localStorage
+    const savedSettings = localStorage.getItem('exam_admin_settings');
+    if (savedSettings) {
+        try {
+            const parsed = JSON.parse(savedSettings);
+            adminSettings = { ...adminSettings, ...parsed };
+        } catch(e) {}
+    }
+    
+    // DOM Elements
+    const panel = document.getElementById('adminSettingsPanel');
+    const showBtn = document.getElementById('showAdminPanel');
+    const closeBtn = document.getElementById('closeAdminPanel');
+    const saveBtn = document.getElementById('saveAdminSettings');
+    const resetBtn = document.getElementById('resetAdminSettings');
+    const addSubjectBtn = document.getElementById('addSubjectBtn');
+    
+    // Update display
+    function updateDisplay() {
+        document.getElementById('adminDuration').value = adminSettings.duration;
+        document.getElementById('adminCorrectMark').value = adminSettings.correctMark;
+        document.getElementById('adminWrongMark').value = adminSettings.wrongMark;
+        document.getElementById('currentDuration').textContent = adminSettings.duration;
+        document.getElementById('currentCorrectMark').textContent = adminSettings.correctMark;
+        document.getElementById('currentWrongMark').textContent = adminSettings.wrongMark;
+        
+        // Render subjects list
+        const subjectsDiv = document.getElementById('subjectsList');
+        subjectsDiv.innerHTML = '';
+        adminSettings.subjects.forEach((subject, idx) => {
+            const subjectDiv = document.createElement('div');
+            subjectDiv.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center;';
+            subjectDiv.innerHTML = `
+                <input type="text" value="${subject.name}" placeholder="Subject Name" style="flex: 2; padding: 5px;" data-subject-name="${idx}">
+                <input type="number" value="${subject.questions}" placeholder="Questions" style="flex: 1; padding: 5px;" data-subject-questions="${idx}">
+                <input type="number" value="${subject.numerical}" placeholder="Numerical" style="flex: 1; padding: 5px;" data-subject-numerical="${idx}">
+                <button class="remove-subject" data-subject-idx="${idx}" style="background: #dc3545; color: white; padding: 5px 10px;">✖</button>
+            `;
+            subjectsDiv.appendChild(subjectDiv);
+        });
+        
+        // Add event listeners to new inputs
+        document.querySelectorAll('[data-subject-name]').forEach(input => {
+            input.addEventListener('change', function() {
+                const idx = this.dataset.subjectName;
+                adminSettings.subjects[idx].name = this.value;
+            });
+        });
+        document.querySelectorAll('[data-subject-questions]').forEach(input => {
+            input.addEventListener('change', function() {
+                const idx = this.dataset.subjectQuestions;
+                adminSettings.subjects[idx].questions = parseInt(this.value) || 0;
+            });
+        });
+        document.querySelectorAll('[data-subject-numerical]').forEach(input => {
+            input.addEventListener('change', function() {
+                const idx = this.dataset.subjectNumerical;
+                adminSettings.subjects[idx].numerical = parseInt(this.value) || 0;
+            });
+        });
+        document.querySelectorAll('.remove-subject').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.dataset.subjectIdx);
+                adminSettings.subjects.splice(idx, 1);
+                updateDisplay();
+            });
+        });
+    }
+    
+    // Add new subject
+    addSubjectBtn.addEventListener('click', () => {
+        adminSettings.subjects.push({ name: "NEW_SUBJECT", questions: 40, numerical: 0 });
+        updateDisplay();
+    });
+    
+    // Apply settings to exam
+    function applySettings() {
+        // Update EXAM_SETUP
+        if (window.EXAM_SETUP) {
+            window.EXAM_SETUP.duration = adminSettings.duration;
+            window.EXAM_SETUP.subjects = adminSettings.subjects;
+            
+            // Update global variables
+            window.EXAM_DURATION_MINUTES = adminSettings.duration;
+            window.MARK_PER_CORRECT = adminSettings.correctMark;
+            window.MARK_PER_WRONG = adminSettings.wrongMark;
+            
+            // Recalculate totals
+            let currentStart = 1;
+            window.EXAM_SETUP.subjects.forEach(subject => {
+                subject.start = currentStart;
+                subject.end = currentStart + subject.questions - 1;
+                subject.mcq = subject.questions - subject.numerical;
+                subject.numericalStart = subject.end - subject.numerical + 1;
+                currentStart = subject.end + 1;
+            });
+            
+            window.TOTAL_QUESTIONS = currentStart - 1;
+            
+            // Show confirmation
+            alert(`✅ Settings Applied!\n\nDuration: ${adminSettings.duration} minutes\nTotal Questions: ${window.TOTAL_QUESTIONS}\nMarks: +${adminSettings.correctMark} / -${adminSettings.wrongMark}\n\n⚠️ Reload page for changes to take full effect.`);
+            
+            // Save to localStorage
+            localStorage.setItem('exam_admin_settings', JSON.stringify(adminSettings));
+        }
+    }
+    
+    // Save and apply
+    saveBtn.addEventListener('click', () => {
+        adminSettings.duration = parseInt(document.getElementById('adminDuration').value) || 180;
+        adminSettings.correctMark = parseFloat(document.getElementById('adminCorrectMark').value) || 1;
+        adminSettings.wrongMark = parseFloat(document.getElementById('adminWrongMark').value) || 0;
+        
+        applySettings();
+        updateDisplay();
+    });
+    
+    // Reset to default
+    resetBtn.addEventListener('click', () => {
+        adminSettings = {
+            duration: 180,
+            correctMark: 1,
+            wrongMark: 0,
+            subjects: [
+                { name: "MATHS", questions: 80, numerical: 0 },
+                { name: "PHYSICS", questions: 40, numerical: 0 },
+                { name: "CHEMISTRY", questions: 40, numerical: 0 }
+            ]
+        };
+        updateDisplay();
+        localStorage.setItem('exam_admin_settings', JSON.stringify(adminSettings));
+        alert('Reset to default settings. Click Save to apply.');
+    });
+    
+    // Show/Hide panel
+    showBtn.addEventListener('click', () => {
+        panel.style.display = 'block';
+        updateDisplay();
+    });
+    closeBtn.addEventListener('click', () => {
+        panel.style.display = 'none';
+    });
+    
+    // Initialize display
+    updateDisplay();
+})();
+</script>
     <div class="container">
         <div class="header">
             <h1>📚 LFJC Teacher Portal</h1>
