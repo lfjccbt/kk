@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
@@ -433,6 +433,110 @@
             transform: translateY(-2px);
         }
         
+        /* Admin Lock Box Styles */
+        .config-icon {
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #4B0082;
+            transition: all 0.3s ease;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .config-icon:hover {
+            transform: rotate(15deg);
+            background: #e0e0e0;
+        }
+        
+        .admin-lock-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        
+        .admin-lock-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 300px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .admin-lock-content h3 {
+            margin-bottom: 20px;
+            color: #4B0082;
+        }
+        
+        .admin-lock-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .admin-lock-content button {
+            padding: 10px 25px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .admin-lock-btn {
+            background: #4B0082;
+            color: white;
+        }
+        
+        .admin-cancel-btn {
+            background: #dc3545;
+            color: white;
+        }
+        
+        /* Subject Input Row */
+        .subject-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .subject-input-row select {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .subject-input-row input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .remove-subject-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -518,8 +622,8 @@
         
         <div class="token-section">
             <div class="token-container">
-                <label>🔑 GitHub Token:</label>
-                <input type="password" id="githubToken" class="token-input" placeholder="Enter your GitHub token (starts with ghp_)">
+                <label>🔑 Access Token:</label>
+                <input type="password" id="githubToken" class="token-input" placeholder="Enter your access token">
                 <button id="saveTokenBtn" class="token-save-btn">💾 Save Token</button>
                 <span id="tokenStatus" class="token-status"></span>
             </div>
@@ -604,21 +708,9 @@
             
             <!-- ========== EXAM CONFIGURATION EDITOR ========== -->
             <div class="config-editor" style="background: #f8f9fa; border: 2px solid #4B0082; border-radius: 10px; padding: 20px; margin-top: 30px;">
-                <h3 style="color: #4B0082; margin-bottom: 15px;">⚙️ Exam Configuration Editor</h3>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="font-weight: bold;">📚 Select Class to Configure:</label>
-                    <select id="configClass" style="width: 100%; padding: 8px; margin-top: 5px;">
-                        <option value="1D">Class 1D</option>
-                        <option value="1M">Class 1M</option>
-                        <option value="1N">Class 1N</option>
-                        <option value="1E">Class 1E</option>
-                        <option value="2D">Class 2D</option>
-                        <option value="2M">Class 2M</option>
-                        <option value="2N">Class 2N</option>
-                        <option value="2E">Class 2E</option>
-                    </select>
-                    <button id="loadConfigBtn" style="background: #17a2b8; color: white; margin-top: 5px; padding: 5px 15px;">Load Current Config</button>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <h3 style="color: #4B0082;">⚙️ Exam Configuration Editor</h3>
+                    <div class="config-icon" id="configLockIcon" title="Admin Access">✏️</div>
                 </div>
                 
                 <div id="configForm" style="display: none;">
@@ -644,17 +736,30 @@
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <label style="font-weight: bold;">📤 Active Subjects for Google Forms:</label>
+                        <label style="font-weight: bold;">📤 Active Subjects for Forms:</label>
                         <div id="activeSubjectsConfigList"></div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Active subjects will be sent to their respective forms</p>
                     </div>
                     
-                    <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 10px 20px; width: 100%;">💾 Save Configuration to GitHub</button>
+                    <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 10px 20px; width: 100%;">💾 Save Configuration</button>
                 </div>
                 
                 <div id="configMessage" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
             </div>
             <!-- ========== END CONFIG EDITOR ========== -->
             
+        </div>
+    </div>
+    
+    <!-- Admin Password Lock Box -->
+    <div id="adminLockBox" class="admin-lock-box">
+        <div class="admin-lock-content">
+            <h3>🔒 Admin Access Required</h3>
+            <input type="password" id="adminLockPassword" placeholder="Enter admin password">
+            <div>
+                <button id="adminLockSubmit" class="admin-lock-btn">Verify</button>
+                <button id="adminLockCancel" class="admin-cancel-btn">Cancel</button>
+            </div>
         </div>
     </div>
     
@@ -670,6 +775,7 @@
     <script>
         // ========== CONFIGURATION ==========
         const REPO_OWNER = 'lfjccbt';
+        const ADMIN_PASSWORD = 'admin2025';
         
         const CLASS_REPO = {
             "1D": "1D", "1M": "1M", "1N": "1N", "1E": "1E",
@@ -677,36 +783,36 @@
         };
         
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbyThPtuipOZaSO98GqhBdGmvNRqkq944RIoqdnG-rETNSGaszvO1V4quafSuE8Qx1c/exec';
-        const GOOGLE_DRIVE_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
+        const BACKUP_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
         
         // ========== STATE ==========
         let selectedFiles = [];
         let selectedClass = "1D";
         let selectedFolder = "questions";
-        let githubToken = localStorage.getItem('github_token') || '';
+        let accessToken = localStorage.getItem('access_token') || '';
         
         // ========== DOM ELEMENTS ==========
         const tokenInput = document.getElementById('githubToken');
         const saveTokenBtn = document.getElementById('saveTokenBtn');
         const tokenStatus = document.getElementById('tokenStatus');
         
-        if (githubToken) {
-            tokenInput.value = githubToken;
+        if (accessToken) {
+            tokenInput.value = accessToken;
             tokenStatus.textContent = '✓ Token saved';
             tokenStatus.style.color = '#10b981';
         }
         
         saveTokenBtn.addEventListener('click', () => {
             const token = tokenInput.value.trim();
-            if (token.startsWith('ghp_')) {
-                localStorage.setItem('github_token', token);
-                githubToken = token;
+            if (token.length > 10) {
+                localStorage.setItem('access_token', token);
+                accessToken = token;
                 tokenStatus.textContent = '✓ Token saved successfully!';
                 tokenStatus.style.color = '#10b981';
                 setTimeout(() => { tokenStatus.textContent = ''; }, 3000);
                 updateUploadButton();
             } else {
-                tokenStatus.textContent = '❌ Invalid token. Must start with ghp_';
+                tokenStatus.textContent = '❌ Invalid token';
                 tokenStatus.style.color = '#ef4444';
                 setTimeout(() => { tokenStatus.textContent = ''; }, 3000);
             }
@@ -717,7 +823,42 @@
             initializeDatePicker();
             updateUI();
             updateUploadButton();
+            setupAdminLock();
         });
+        
+        function setupAdminLock() {
+            const lockIcon = document.getElementById('configLockIcon');
+            const lockBox = document.getElementById('adminLockBox');
+            const lockSubmit = document.getElementById('adminLockSubmit');
+            const lockCancel = document.getElementById('adminLockCancel');
+            const lockPassword = document.getElementById('adminLockPassword');
+            
+            lockIcon.addEventListener('click', () => {
+                lockBox.style.display = 'flex';
+                lockPassword.value = '';
+                lockPassword.focus();
+            });
+            
+            lockSubmit.addEventListener('click', () => {
+                if (lockPassword.value === ADMIN_PASSWORD) {
+                    lockBox.style.display = 'none';
+                    document.getElementById('configForm').style.display = 'block';
+                    loadConfig();
+                } else {
+                    alert('Incorrect password!');
+                    lockPassword.value = '';
+                    lockPassword.focus();
+                }
+            });
+            
+            lockCancel.addEventListener('click', () => {
+                lockBox.style.display = 'none';
+            });
+            
+            lockPassword.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') lockSubmit.click();
+            });
+        }
         
         function initializeDatePicker() {
             const dateInput = document.getElementById('selectedDate');
@@ -751,10 +892,9 @@
             notepadContainer.insertBefore(printHeader, notepadContainer.firstChild);
         }
         
-        // ========== GITHUB UPLOAD ==========
-        async function uploadToGitHub(repoName, filePath, base64Content) {
-            const token = githubToken;
-            if (!token) throw new Error('No GitHub token');
+        async function uploadToRepository(repoName, filePath, base64Content) {
+            const token = accessToken;
+            if (!token) throw new Error('No access token');
             
             const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
                 headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -779,7 +919,7 @@
             
             if (!uploadRes.ok) {
                 const error = await uploadRes.json();
-                throw new Error(`GitHub error: ${error.message || uploadRes.status}`);
+                throw new Error(`Upload error: ${error.message || uploadRes.status}`);
             }
             return true;
         }
@@ -793,7 +933,6 @@
             });
         }
         
-        // ========== NOTEPAD LOGIC ==========
         function setupEventListeners() {
             document.querySelectorAll('.class-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -845,28 +984,6 @@
                 let value = textarea.value;
                 value = value.toUpperCase();
                 value = value.replace(/[^ABCD0-9\n]/g, '');
-                
-                const textBeforeCursor = value.substring(0, cursorPos);
-                const linesBefore = textBeforeCursor.split('\n');
-                const currentLine = linesBefore[linesBefore.length - 1];
-                
-                const typedChar = e.data ? e.data.toUpperCase() : '';
-                if (/^[ABCD0-9]$/.test(typedChar)) {
-                    const charsInLine = currentLine.replace(/[^ABCD0-9]/g, '').length;
-                    if (charsInLine === 5) {
-                        const beforeText = value.substring(0, cursorPos);
-                        const afterText = value.substring(cursorPos);
-                        value = beforeText + '\n' + afterText;
-                        textarea.value = value;
-                        const newCursorPos = cursorPos + 1;
-                        setTimeout(() => {
-                            textarea.setSelectionRange(newCursorPos, newCursorPos);
-                        }, 0);
-                        updateAnswerCount();
-                        updateUploadButton();
-                        return;
-                    }
-                }
                 
                 const lines = value.split('\n');
                 let formattedLines = [];
@@ -949,7 +1066,7 @@
         
         function updateUploadButton() {
             const uploadBtn = document.getElementById('uploadBtn');
-            const hasToken = githubToken && githubToken.startsWith('ghp_');
+            const hasToken = accessToken && accessToken.length > 10;
             if (!hasToken) {
                 uploadBtn.disabled = true;
                 return;
@@ -990,15 +1107,14 @@
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
         
-        // ========== MAIN UPLOAD ==========
         async function startUpload() {
             const uploadBtn = document.getElementById('uploadBtn');
             const progressContainer = document.getElementById('progressContainer');
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
             
-            if (!githubToken || !githubToken.startsWith('ghp_')) {
-                showAcknowledgement('No Token', 'Please save your GitHub token first.', false);
+            if (!accessToken || accessToken.length < 10) {
+                showAcknowledgement('No Token', 'Please save your access token first.', false);
                 return;
             }
             
@@ -1040,7 +1156,7 @@
                 
                 const base64Content = await fileToBase64(file);
                 const filePath = `questions/${file.name}`;
-                await uploadToGitHub(repoName, filePath, base64Content);
+                await uploadToRepository(repoName, filePath, base64Content);
                 success++;
             }
             
@@ -1053,7 +1169,6 @@
         }
         
         async function uploadAnswerKey(progressFill, progressText, repoName) {
-            const className = selectedClass;
             const textarea = document.getElementById('notepadContent');
             let content = textarea.value.trim();
             const selectedDate = document.getElementById('selectedDate').value;
@@ -1111,14 +1226,14 @@
             
             progressFill.style.width = '70%';
             progressFill.textContent = '70%';
-            progressText.textContent = 'Uploading to GitHub...';
+            progressText.textContent = 'Uploading to repository...';
             
             const filePath = `answer-key.txt`;
-            await uploadToGitHub(repoName, filePath, base64Content);
+            await uploadToRepository(repoName, filePath, base64Content);
             
             progressFill.style.width = '90%';
             progressFill.textContent = '90%';
-            progressText.textContent = 'Sending to Google Drive backup...';
+            progressText.textContent = 'Sending backup...';
             
             try {
                 await fetch(GAS_URL, {
@@ -1129,18 +1244,18 @@
                         section: selectedClass,
                         filenameDate: filenameDate,
                         content: pdfContent,
-                        folderId: GOOGLE_DRIVE_FOLDER_ID
+                        folderId: BACKUP_FOLDER_ID
                     })
                 });
-                console.log('✅ Sent to Google Drive');
+                console.log('✅ Backup sent');
             } catch (e) {
-                console.log('Google Drive backup optional:', e);
+                console.log('Backup optional:', e);
             }
             
             progressFill.style.width = '100%';
             progressFill.textContent = '100%';
             
-            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Google Drive backup sent`, true);
+            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Backup sent`, true);
             
             textarea.value = '';
             updateAnswerCount();
@@ -1158,10 +1273,10 @@
             }
             
             async function loadConfig() {
-                const classValue = document.getElementById('configClass').value;
+                const classValue = document.getElementById('configClass')?.value || selectedClass;
                 const token = getToken();
                 if (!token) {
-                    alert('Please enter GitHub token first');
+                    showConfigMessage('Please enter access token first', 'error');
                     return;
                 }
                 
@@ -1175,16 +1290,11 @@
                             duration: 180,
                             correctMark: 1,
                             wrongMark: 0,
-                            activeForForms: ["MATHS", "PHYSICS", "CHEMISTRY"],
-                            subjects: [
-                                { name: "MATHS", questions: 80, numerical: 0 },
-                                { name: "PHYSICS", questions: 40, numerical: 0 },
-                                { name: "CHEMISTRY", questions: 40, numerical: 0 }
-                            ]
+                            activeForForms: [],
+                            subjects: []
                         };
                     }
                     displayConfig();
-                    document.getElementById('configForm').style.display = 'block';
                     showConfigMessage('Config loaded for ' + classValue, 'success');
                 } catch(e) {
                     showConfigMessage('Error loading config: ' + e.message, 'error');
@@ -1198,42 +1308,56 @@
                 
                 const subjectsDiv = document.getElementById('subjectsConfigList');
                 subjectsDiv.innerHTML = '';
+                
+                const subjectOptions = ['MATHS', 'PHYSICS', 'CHEMISTRY', 'BOTANY', 'ZOOLOGY', 'MATHS_A', 'MATHS_B', 'BZ'];
+                
                 currentConfig.subjects.forEach((subject, idx) => {
                     const div = document.createElement('div');
-                    div.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center;';
+                    div.className = 'subject-input-row';
                     div.innerHTML = `
-                        <input type="text" value="${subject.name}" style="flex: 2; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" data-subject-name="${idx}">
-                        <input type="number" value="${subject.questions}" style="flex: 1; padding: 5px;" data-subject-questions="${idx}">
-                        <input type="number" value="${subject.numerical}" style="flex: 1; padding: 5px;" data-subject-numerical="${idx}">
-                        <button class="remove-subject-config" data-idx="${idx}" style="background: #dc3545; color: white; padding: 5px 10px;">✖</button>
+                        <select class="subject-name-select" data-idx="${idx}">
+                            ${subjectOptions.map(opt => `<option value="${opt}" ${subject.name === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                        <input type="number" value="${subject.questions}" class="subject-questions" data-idx="${idx}" placeholder="Questions">
+                        <input type="number" value="${subject.numerical}" class="subject-numerical" data-idx="${idx}" placeholder="Numerical">
+                        <button class="remove-subject-btn" data-idx="${idx}">✖</button>
                     `;
                     subjectsDiv.appendChild(div);
                 });
                 
-                document.querySelectorAll('[data-subject-name]').forEach(inp => {
-                    inp.addEventListener('change', function() {
-                        currentConfig.subjects[this.dataset.subjectName].name = this.value;
+                document.querySelectorAll('.subject-name-select').forEach(select => {
+                    select.addEventListener('change', function() {
+                        currentConfig.subjects[this.dataset.idx].name = this.value;
+                        updateActiveSubjectsCheckboxes();
                     });
                 });
-                document.querySelectorAll('[data-subject-questions]').forEach(inp => {
+                
+                document.querySelectorAll('.subject-questions').forEach(inp => {
                     inp.addEventListener('change', function() {
-                        currentConfig.subjects[this.dataset.subjectQuestions].questions = parseInt(this.value) || 0;
+                        currentConfig.subjects[this.dataset.idx].questions = parseInt(this.value) || 0;
                     });
                 });
-                document.querySelectorAll('[data-subject-numerical]').forEach(inp => {
+                
+                document.querySelectorAll('.subject-numerical').forEach(inp => {
                     inp.addEventListener('change', function() {
-                        currentConfig.subjects[this.dataset.subjectNumerical].numerical = parseInt(this.value) || 0;
+                        currentConfig.subjects[this.dataset.idx].numerical = parseInt(this.value) || 0;
                     });
                 });
-                document.querySelectorAll('.remove-subject-config').forEach(btn => {
+                
+                document.querySelectorAll('.remove-subject-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         currentConfig.subjects.splice(parseInt(this.dataset.idx), 1);
                         displayConfig();
                     });
                 });
                 
+                updateActiveSubjectsCheckboxes();
+            }
+            
+            function updateActiveSubjectsCheckboxes() {
                 const activeDiv = document.getElementById('activeSubjectsConfigList');
                 activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+                
                 currentConfig.subjects.forEach(subject => {
                     const isActive = currentConfig.activeForForms.includes(subject.name);
                     activeDiv.innerHTML += `
@@ -1266,12 +1390,12 @@
             
             async function saveConfig() {
                 const token = getToken();
-                if (!token || !token.startsWith('ghp_')) {
-                    showConfigMessage('Please enter a valid GitHub token', 'error');
+                if (!token || token.length < 10) {
+                    showConfigMessage('Please enter a valid access token', 'error');
                     return;
                 }
                 
-                const classValue = document.getElementById('configClass').value;
+                const classValue = document.getElementById('configClass')?.value || selectedClass;
                 const configData = {
                     duration: parseInt(document.getElementById('configDuration').value) || 180,
                     correctMark: parseFloat(document.getElementById('configCorrectMark').value) || 1,
@@ -1326,10 +1450,41 @@
                 setTimeout(() => msgDiv.style.display = 'none', 5000);
             }
             
-            document.getElementById('loadConfigBtn').addEventListener('click', loadConfig);
-            document.getElementById('saveConfigBtn').addEventListener('click', saveConfig);
+            window.loadConfig = loadConfig;
+            window.saveConfig = saveConfig;
+            
+            // Add class selector to config
+            const configClassSelect = document.createElement('select');
+            configClassSelect.id = 'configClass';
+            configClassSelect.style.cssText = 'width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px;';
+            configClassSelect.innerHTML = `
+                <option value="1D">Class 1D</option>
+                <option value="1M">Class 1M</option>
+                <option value="1N">Class 1N</option>
+                <option value="1E">Class 1E</option>
+                <option value="2D">Class 2D</option>
+                <option value="2M">Class 2M</option>
+                <option value="2N">Class 2N</option>
+                <option value="2E">Class 2E</option>
+            `;
+            
+            const configDiv = document.querySelector('.config-editor > div:first-child');
+            if (configDiv) {
+                const label = document.createElement('label');
+                label.style.fontWeight = 'bold';
+                label.textContent = '📚 Select Class to Configure:';
+                configDiv.appendChild(label);
+                configDiv.appendChild(configClassSelect);
+                
+                const loadBtn = document.createElement('button');
+                loadBtn.textContent = 'Load Current Config';
+                loadBtn.style.cssText = 'background: #17a2b8; color: white; margin-top: 5px; padding: 5px 15px; border: none; border-radius: 5px; cursor: pointer;';
+                loadBtn.onclick = loadConfig;
+                configDiv.appendChild(loadBtn);
+            }
+            
+            document.getElementById('saveConfigBtn').onclick = saveConfig;
         })();
-        // ========== END CONFIG EDITOR ==========
         
     </script>
 </body>
