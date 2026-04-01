@@ -35,13 +35,15 @@
         }
         
         .header h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 5px;
+            font-weight: 800;
         }
         
         .header p {
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0.9;
+            font-weight: 600;
         }
         
         .token-section {
@@ -58,18 +60,19 @@
         }
         
         .token-container label {
-            font-weight: 600;
+            font-weight: 800;
             color: #92400e;
-            font-size: 14px;
+            font-size: 15px;
         }
         
         .token-input {
             flex: 1;
             min-width: 250px;
-            padding: 10px 15px;
-            border: 1px solid #fcd34d;
+            padding: 12px 15px;
+            border: 2px solid #fcd34d;
             border-radius: 8px;
             font-size: 14px;
+            font-weight: 600;
             font-family: monospace;
             background: #fffbeb;
         }
@@ -81,7 +84,8 @@
         }
         
         .token-status {
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 700;
             color: #92400e;
         }
         
@@ -89,11 +93,11 @@
             background: #10b981;
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
+            padding: 10px 22px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
         }
         
         .token-save-btn:hover {
@@ -120,19 +124,22 @@
         }
         
         .date-picker label {
-            font-weight: 600;
+            font-weight: 800;
             color: #2d3748;
+            font-size: 15px;
         }
         
         .date-picker input {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 2px solid #cbd5e0;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 600;
         }
         
         .date-note {
             font-size: 12px;
+            font-weight: 600;
             color: #718096;
             margin-top: 8px;
         }
@@ -148,8 +155,9 @@
         .form-group label {
             display: block;
             margin-bottom: 10px;
-            font-weight: 600;
+            font-weight: 800;
             color: #333;
+            font-size: 16px;
         }
         
         .class-options {
@@ -165,7 +173,8 @@
             border-radius: 8px;
             cursor: pointer;
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 15px;
             transition: all 0.2s;
         }
         
@@ -216,6 +225,13 @@
         
         .folder-btn h4 {
             margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        
+        .folder-btn p {
+            font-size: 13px;
+            font-weight: 600;
         }
         
         .upload-section {
@@ -242,6 +258,15 @@
             color: #667eea;
         }
         
+        .upload-area h3 {
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .upload-area p {
+            font-weight: 600;
+        }
+        
         .file-list {
             max-height: 150px;
             overflow-y: auto;
@@ -256,6 +281,7 @@
             padding: 8px;
             border-bottom: 1px solid #f3f4f6;
             font-size: 14px;
+            font-weight: 600;
         }
         
         .progress-container {
@@ -281,7 +307,7 @@
             justify-content: center;
             color: white;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 800;
         }
         
         .notepad-container {
@@ -298,7 +324,8 @@
         }
         
         .notepad-header h3 {
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 800;
         }
         
         .notepad-textarea {
@@ -308,6 +335,7 @@
             border: none;
             font-family: 'Courier New', monospace;
             font-size: 18px;
+            font-weight: 600;
             line-height: 1.6;
             resize: vertical;
             background: #fafafa;
@@ -323,7 +351,8 @@
         .notepad-footer {
             background: #fffef0;
             padding: 10px 15px;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 700;
             color: #666;
             display: flex;
             justify-content: space-between;
@@ -342,6 +371,7 @@
             margin: 0;
             color: #2d3748;
             font-size: 18px;
+            font-weight: 800;
         }
         
         .action-buttons {
@@ -355,8 +385,8 @@
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 800;
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -403,13 +433,14 @@
         
         .acknowledgement-title {
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 800;
             margin-bottom: 15px;
             color: #333;
         }
         
         .acknowledgement-message {
             font-size: 16px;
+            font-weight: 600;
             color: #666;
             margin-bottom: 25px;
             line-height: 1.5;
@@ -423,7 +454,7 @@
             padding: 12px 30px;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -433,21 +464,23 @@
             transform: translateY(-2px);
         }
         
-        /* Admin Lock Box Styles */
+        /* Config Icon - Pen Only */
         .config-icon {
-            display: inline-block;
-            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 28px;
             color: #4B0082;
             transition: all 0.3s ease;
             background: #f0f0f0;
-            padding: 5px 10px;
-            border-radius: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
         }
         
         .config-icon:hover {
-            transform: rotate(15deg);
+            transform: rotate(15deg) scale(1.05);
             background: #e0e0e0;
         }
         
@@ -466,16 +499,18 @@
         
         .admin-lock-content {
             background: white;
-            padding: 30px;
+            padding: 35px;
             border-radius: 15px;
             text-align: center;
-            min-width: 300px;
+            min-width: 320px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         
         .admin-lock-content h3 {
             margin-bottom: 20px;
             color: #4B0082;
+            font-size: 22px;
+            font-weight: 800;
         }
         
         .admin-lock-content input {
@@ -485,6 +520,7 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
+            font-weight: 600;
         }
         
         .admin-lock-content button {
@@ -493,7 +529,8 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 800;
+            font-size: 14px;
         }
         
         .admin-lock-btn {
@@ -510,31 +547,55 @@
         .subject-input-row {
             display: flex;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             align-items: center;
         }
         
         .subject-input-row select {
             flex: 2;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
         }
         
         .subject-input-row input {
             flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
         }
         
         .remove-subject-btn {
             background: #dc3545;
             color: white;
-            padding: 8px 12px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 800;
+        }
+        
+        .config-editor label {
+            font-weight: 800;
+            font-size: 15px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .config-editor input, .config-editor select {
+            font-weight: 600;
+        }
+        
+        .config-editor button {
+            font-weight: 800;
+        }
+        
+        #subjectsConfigList {
+            margin-bottom: 10px;
         }
         
         @keyframes fadeIn {
@@ -617,13 +678,13 @@
     <div class="container">
         <div class="header">
             <h1>📚 LFJC Teacher Portal</h1>
-            <p>Upload questions to /questions/ folder | Answer keys to repo root</p>
+            <p>Upload questions to /questions/ folder | Answer keys to class folder root</p>
         </div>
         
         <div class="token-section">
             <div class="token-container">
                 <label>🔑 Access Token:</label>
-                <input type="password" id="githubToken" class="token-input" placeholder="Enter your access token">
+                <input type="password" id="accessToken" class="token-input" placeholder="Enter your access token">
                 <button id="saveTokenBtn" class="token-save-btn">💾 Save Token</button>
                 <span id="tokenStatus" class="token-status"></span>
             </div>
@@ -686,7 +747,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill">0%</div>
                 </div>
-                <p id="progressText" style="text-align: center; margin-top: 10px; font-size: 12px;"></p>
+                <p id="progressText" style="text-align: center; margin-top: 10px; font-size: 12px; font-weight: 600;"></p>
             </div>
             
             <div class="notepad-container" id="notepadContainer" style="display: none;">
@@ -706,45 +767,57 @@
                 </button>
             </div>
             
-            <!-- ========== EXAM CONFIGURATION EDITOR ========== -->
-            <div class="config-editor" style="background: #f8f9fa; border: 2px solid #4B0082; border-radius: 10px; padding: 20px; margin-top: 30px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                    <h3 style="color: #4B0082;">⚙️ Exam Configuration Editor</h3>
-                    <div class="config-icon" id="configLockIcon" title="Admin Access">✏️</div>
+            <!-- ========== EXAM CONFIGURATION EDITOR - PEN ICON ONLY ========== -->
+            <div class="config-editor" style="background: #f8f9fa; border: 2px solid #4B0082; border-radius: 10px; padding: 20px; margin-top: 30px; text-align: center;">
+                <div class="config-icon" id="configLockIcon" title="Admin Access">✏️</div>
+                <p style="margin-top: 10px; font-size: 12px; font-weight: 600; color: #666;">Click to configure exam settings</p>
+                
+                <div id="configClassSelector" style="display: none; margin-top: 20px;">
+                    <label style="font-weight: 800;">📚 Select Class to Configure:</label>
+                    <select id="configClass" style="width: 100%; padding: 10px; margin-top: 8px; border: 2px solid #ccc; border-radius: 6px; font-weight: 600;">
+                        <option value="1D">Class 1D</option>
+                        <option value="1M">Class 1M</option>
+                        <option value="1N">Class 1N</option>
+                        <option value="1E">Class 1E</option>
+                        <option value="2D">Class 2D</option>
+                        <option value="2M">Class 2M</option>
+                        <option value="2N">Class 2N</option>
+                        <option value="2E">Class 2E</option>
+                    </select>
+                    <button id="loadConfigBtn" style="background: #17a2b8; color: white; margin-top: 10px; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 800;">Load Current Config</button>
                 </div>
                 
-                <div id="configForm" style="display: none;">
+                <div id="configForm" style="display: none; text-align: left; margin-top: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
                         <div>
                             <label>⏱️ Duration (minutes):</label>
-                            <input type="number" id="configDuration" style="width: 100%; padding: 8px;">
+                            <input type="number" id="configDuration" style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 6px;">
                         </div>
                         <div>
                             <label>✅ Correct Answer Mark:</label>
-                            <input type="number" id="configCorrectMark" step="0.5" style="width: 100%; padding: 8px;">
+                            <input type="number" id="configCorrectMark" step="0.5" style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 6px;">
                         </div>
                         <div>
                             <label>❌ Wrong Answer Mark:</label>
-                            <input type="number" id="configWrongMark" step="0.5" style="width: 100%; padding: 8px;">
+                            <input type="number" id="configWrongMark" step="0.5" style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 6px;">
                         </div>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <label style="font-weight: bold;">📚 Subjects & Questions:</label>
+                        <label style="font-weight: 800;">📚 Subjects & Questions:</label>
                         <div id="subjectsConfigList"></div>
-                        <button id="addSubjectConfigBtn" style="background: #28a745; color: white; margin-top: 5px; padding: 5px 15px;">+ Add Subject</button>
+                        <button id="addSubjectConfigBtn" style="background: #28a745; color: white; margin-top: 5px; padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 800;">+ Add Subject</button>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <label style="font-weight: bold;">📤 Active Subjects for Forms:</label>
+                        <label style="font-weight: 800;">📤 Active Subjects:</label>
                         <div id="activeSubjectsConfigList"></div>
-                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Active subjects will be sent to their respective forms</p>
                     </div>
                     
-                    <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 10px 20px; width: 100%;">💾 Save Configuration</button>
+                    <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 12px 20px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: 800;">💾 Save Configuration</button>
                 </div>
                 
-                <div id="configMessage" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+                <div id="configMessage" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none; font-weight: 600;"></div>
             </div>
             <!-- ========== END CONFIG EDITOR ========== -->
             
@@ -782,7 +855,7 @@
             "2D": "2D", "2M": "2M", "2N": "2N", "2E": "2E"
         };
         
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyThPtuipOZaSO98GqhBdGmvNRqkq944RIoqdnG-rETNSGaszvO1V4quafSuE8Qx1c/exec';
+        const BACKUP_URL = 'https://script.google.com/macros/s/AKfycbyThPtuipOZaSO98GqhBdGmvNRqkq944RIoqdnG-rETNSGaszvO1V4quafSuE8Qx1c/exec';
         const BACKUP_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
         
         // ========== STATE ==========
@@ -792,7 +865,7 @@
         let accessToken = localStorage.getItem('access_token') || '';
         
         // ========== DOM ELEMENTS ==========
-        const tokenInput = document.getElementById('githubToken');
+        const tokenInput = document.getElementById('accessToken');
         const saveTokenBtn = document.getElementById('saveTokenBtn');
         const tokenStatus = document.getElementById('tokenStatus');
         
@@ -842,6 +915,7 @@
             lockSubmit.addEventListener('click', () => {
                 if (lockPassword.value === ADMIN_PASSWORD) {
                     lockBox.style.display = 'none';
+                    document.getElementById('configClassSelector').style.display = 'block';
                     document.getElementById('configForm').style.display = 'block';
                     loadConfig();
                 } else {
@@ -892,11 +966,11 @@
             notepadContainer.insertBefore(printHeader, notepadContainer.firstChild);
         }
         
-        async function uploadToRepository(repoName, filePath, base64Content) {
+        async function uploadToClassFolder(classFolder, filePath, base64Content) {
             const token = accessToken;
             if (!token) throw new Error('No access token');
             
-            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
+            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classFolder}/contents/${filePath}`, {
                 headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
             });
             
@@ -906,7 +980,7 @@
                 sha = data.sha;
             }
             
-            const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
+            const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classFolder}/contents/${filePath}`, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -1118,9 +1192,9 @@
                 return;
             }
             
-            const repoName = CLASS_REPO[selectedClass];
-            if (!repoName) {
-                showAcknowledgement('Error', `No repository for class ${selectedClass}`, false);
+            const classFolder = CLASS_REPO[selectedClass];
+            if (!classFolder) {
+                showAcknowledgement('Error', `No class folder for ${selectedClass}`, false);
                 return;
             }
             
@@ -1130,9 +1204,9 @@
             
             try {
                 if (selectedFolder === 'questions') {
-                    await uploadQuestions(progressFill, progressText, repoName);
+                    await uploadQuestions(progressFill, progressText, classFolder);
                 } else {
-                    await uploadAnswerKey(progressFill, progressText, repoName);
+                    await uploadAnswerKey(progressFill, progressText, classFolder);
                 }
             } catch (error) {
                 showAcknowledgement('Upload Failed', error.message, false);
@@ -1143,7 +1217,7 @@
             }
         }
         
-        async function uploadQuestions(progressFill, progressText, repoName) {
+        async function uploadQuestions(progressFill, progressText, classFolder) {
             if (selectedFiles.length === 0) throw new Error('No files selected');
             
             let success = 0;
@@ -1156,19 +1230,19 @@
                 
                 const base64Content = await fileToBase64(file);
                 const filePath = `questions/${file.name}`;
-                await uploadToRepository(repoName, filePath, base64Content);
+                await uploadToClassFolder(classFolder, filePath, base64Content);
                 success++;
             }
             
             progressFill.style.width = '100%';
-            showAcknowledgement('Upload Successful!', `✅ ${success} files uploaded to ${repoName}/questions/\n📁 Files keep original names\n🔄 Exam will update in 1-2 minutes`, true);
+            showAcknowledgement('Upload Successful!', `✅ ${success} files uploaded to ${classFolder}/questions/\n📁 Files keep original names\n🔄 Exam will update in 1-2 minutes`, true);
             selectedFiles = [];
             document.getElementById('fileInput').value = '';
             updateFileList();
             updateUploadButton();
         }
         
-        async function uploadAnswerKey(progressFill, progressText, repoName) {
+        async function uploadAnswerKey(progressFill, progressText, classFolder) {
             const textarea = document.getElementById('notepadContent');
             let content = textarea.value.trim();
             const selectedDate = document.getElementById('selectedDate').value;
@@ -1226,17 +1300,17 @@
             
             progressFill.style.width = '70%';
             progressFill.textContent = '70%';
-            progressText.textContent = 'Uploading to repository...';
+            progressText.textContent = 'Uploading to class folder...';
             
             const filePath = `answer-key.txt`;
-            await uploadToRepository(repoName, filePath, base64Content);
+            await uploadToClassFolder(classFolder, filePath, base64Content);
             
             progressFill.style.width = '90%';
             progressFill.textContent = '90%';
             progressText.textContent = 'Sending backup...';
             
             try {
-                await fetch(GAS_URL, {
+                await fetch(BACKUP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
@@ -1269,11 +1343,11 @@
             let currentConfig = null;
             
             function getToken() {
-                return document.getElementById('githubToken').value.trim();
+                return document.getElementById('accessToken').value.trim();
             }
             
             async function loadConfig() {
-                const classValue = document.getElementById('configClass')?.value || selectedClass;
+                const classValue = document.getElementById('configClass').value;
                 const token = getToken();
                 if (!token) {
                     showConfigMessage('Please enter access token first', 'error');
@@ -1310,6 +1384,14 @@
                 subjectsDiv.innerHTML = '';
                 
                 const subjectOptions = ['MATHS', 'PHYSICS', 'CHEMISTRY', 'BOTANY', 'ZOOLOGY', 'MATHS_A', 'MATHS_B', 'BZ'];
+                
+                if (currentConfig.subjects.length === 0) {
+                    currentConfig.subjects = [
+                        { name: "MATHS", questions: 80, numerical: 0 },
+                        { name: "PHYSICS", questions: 40, numerical: 0 },
+                        { name: "CHEMISTRY", questions: 40, numerical: 0 }
+                    ];
+                }
                 
                 currentConfig.subjects.forEach((subject, idx) => {
                     const div = document.createElement('div');
@@ -1356,12 +1438,12 @@
             
             function updateActiveSubjectsCheckboxes() {
                 const activeDiv = document.getElementById('activeSubjectsConfigList');
-                activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+                activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;">';
                 
                 currentConfig.subjects.forEach(subject => {
-                    const isActive = currentConfig.activeForForms.includes(subject.name);
+                    const isActive = currentConfig.activeForForms && currentConfig.activeForForms.includes(subject.name);
                     activeDiv.innerHTML += `
-                        <label style="display: flex; align-items: center; gap: 5px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
                             <input type="checkbox" class="active-checkbox-config" data-subject="${subject.name}" ${isActive ? 'checked' : ''}>
                             ${subject.name}
                         </label>
@@ -1372,6 +1454,7 @@
                 document.querySelectorAll('.active-checkbox-config').forEach(cb => {
                     cb.addEventListener('change', function() {
                         const subject = this.dataset.subject;
+                        if (!currentConfig.activeForForms) currentConfig.activeForForms = [];
                         if (this.checked) {
                             if (!currentConfig.activeForForms.includes(subject)) {
                                 currentConfig.activeForForms.push(subject);
@@ -1384,6 +1467,7 @@
             }
             
             document.getElementById('addSubjectConfigBtn').addEventListener('click', () => {
+                if (!currentConfig.subjects) currentConfig.subjects = [];
                 currentConfig.subjects.push({ name: "NEW_SUBJECT", questions: 40, numerical: 0 });
                 displayConfig();
             });
@@ -1395,12 +1479,12 @@
                     return;
                 }
                 
-                const classValue = document.getElementById('configClass')?.value || selectedClass;
+                const classValue = document.getElementById('configClass').value;
                 const configData = {
                     duration: parseInt(document.getElementById('configDuration').value) || 180,
                     correctMark: parseFloat(document.getElementById('configCorrectMark').value) || 1,
                     wrongMark: parseFloat(document.getElementById('configWrongMark').value) || 0,
-                    activeForForms: currentConfig.activeForForms,
+                    activeForForms: currentConfig.activeForForms || [],
                     subjects: currentConfig.subjects
                 };
                 
@@ -1450,40 +1534,8 @@
                 setTimeout(() => msgDiv.style.display = 'none', 5000);
             }
             
-            window.loadConfig = loadConfig;
-            window.saveConfig = saveConfig;
-            
-            // Add class selector to config
-            const configClassSelect = document.createElement('select');
-            configClassSelect.id = 'configClass';
-            configClassSelect.style.cssText = 'width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px;';
-            configClassSelect.innerHTML = `
-                <option value="1D">Class 1D</option>
-                <option value="1M">Class 1M</option>
-                <option value="1N">Class 1N</option>
-                <option value="1E">Class 1E</option>
-                <option value="2D">Class 2D</option>
-                <option value="2M">Class 2M</option>
-                <option value="2N">Class 2N</option>
-                <option value="2E">Class 2E</option>
-            `;
-            
-            const configDiv = document.querySelector('.config-editor > div:first-child');
-            if (configDiv) {
-                const label = document.createElement('label');
-                label.style.fontWeight = 'bold';
-                label.textContent = '📚 Select Class to Configure:';
-                configDiv.appendChild(label);
-                configDiv.appendChild(configClassSelect);
-                
-                const loadBtn = document.createElement('button');
-                loadBtn.textContent = 'Load Current Config';
-                loadBtn.style.cssText = 'background: #17a2b8; color: white; margin-top: 5px; padding: 5px 15px; border: none; border-radius: 5px; cursor: pointer;';
-                loadBtn.onclick = loadConfig;
-                configDiv.appendChild(loadBtn);
-            }
-            
-            document.getElementById('saveConfigBtn').onclick = saveConfig;
+            document.getElementById('loadConfigBtn').addEventListener('click', loadConfig);
+            document.getElementById('saveConfigBtn').addEventListener('click', saveConfig);
         })();
         
     </script>
