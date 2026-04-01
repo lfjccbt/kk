@@ -513,7 +513,7 @@
     <div class="container">
         <div class="header">
             <h1>📚 LFJC Teacher Portal</h1>
-            <p>Upload questions and answer keys to GitHub</p>
+            <p>Upload questions and answer keys to class repos</p>
         </div>
         
         <div class="token-section">
@@ -557,11 +557,11 @@
                 <div class="folder-options">
                     <div class="folder-btn questions active" data-folder="questions">
                         <h4>📝 Questions</h4>
-                        <p>Upload question files</p>
+                        <p>Upload question files (1.png, 2.png...)</p>
                     </div>
                     <div class="folder-btn answers" data-folder="answers">
                         <h4>✅ Answers</h4>
-                        <p>Type and upload answer key</p>
+                        <p>Type and upload answer key (answer-key.txt)</p>
                     </div>
                 </div>
             </div>
@@ -572,6 +572,7 @@
                     <div class="upload-icon">📂</div>
                     <h3>Click to Browse Files</h3>
                     <p>or drag and drop files here</p>
+                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files will be uploaded as 1.png, 2.png, etc. to the class repo</p>
                 </div>
                 <input type="file" id="fileInput" multiple style="display: none;">
                 <div class="file-list" id="fileList"></div>
@@ -591,7 +592,7 @@
                 <textarea class="notepad-textarea" id="notepadContent" placeholder="Type letters (A-D) or numbers - 5 per row auto-enter"></textarea>
                 <div class="notepad-footer">
                     <div>Total answers: <span id="answerCount">0</span></div>
-                    <div>5 per row (auto-enter)</div>
+                    <div>5 per row (auto-enter) → Saves as answer-key.txt</div>
                 </div>
             </div>
             
@@ -615,7 +616,18 @@
     <script>
         // ========== CONFIGURATION ==========
         const REPO_OWNER = 'lfjccbt';
-        const REPO_NAME = 'kk';
+        
+        // Map each class to its repo name
+        const CLASS_REPO = {
+            "1D": "1D",
+            "1M": "1M", 
+            "1N": "1N",
+            "1E": "1E",
+            "2D": "2D",
+            "2M": "2M",
+            "2N": "2N",
+            "2E": "2E"
+        };
         
         // Google Drive Backup (optional)
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbz93UeEM0siHeoYUgf5l9w8wfvg4Z8RVz4Sr9Lh4iL84yR-kSqC4nrjKWIlabq-z-_-9Q/exec';
@@ -703,14 +715,14 @@
         }
         
         // ========== GITHUB UPLOAD (DIRECT WITH TOKEN) ==========
-        async function uploadToGitHub(filePath, base64Content) {
+        async function uploadToGitHub(repoName, filePath, base64Content) {
             const token = githubToken;
             if (!token) {
                 throw new Error('No GitHub token. Please save your token first.');
             }
             
             // Check if file exists
-            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
                 headers: {
                     'Authorization': `token ${token}`,
                     'Accept': 'application/vnd.github.v3+json'
@@ -724,7 +736,7 @@
             }
             
             // Upload file
-            const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+            const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repoName}/contents/${filePath}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `token ${token}`,
@@ -900,13 +912,13 @@
                 notepadContainer.style.display = 'block';
                 questionSection.style.display = 'none';
                 uploadBtn.textContent = '📤 Upload Answer Key';
-                folderLabel.textContent = 'Type Answer Key Below';
+                folderLabel.textContent = 'Type Answer Key Below (saves as answer-key.txt)';
                 updatePrintHeader();
             } else {
                 notepadContainer.style.display = 'none';
                 questionSection.style.display = 'block';
-                uploadBtn.textContent = '📤 Upload Files';
-                folderLabel.textContent = 'Select Files for Questions';
+                uploadBtn.textContent = '📤 Upload Questions';
+                folderLabel.textContent = 'Select Question Images (1.png, 2.png...)';
             }
             
             updateUploadButton();
@@ -916,8 +928,8 @@
             const fileList = document.getElementById('fileList');
             
             if (selectedFiles.length > 0) {
-                fileList.innerHTML = selectedFiles.map(file => 
-                    `<div class="file-item">📄 ${file.name} (${formatSize(file.size)})</div>`
+                fileList.innerHTML = selectedFiles.map((file, index) => 
+                    `<div class="file-item">📄 ${index + 1}.png (${formatSize(file.size)}) ← ${file.name}</div>`
                 ).join('');
             } else {
                 fileList.innerHTML = '';
@@ -1000,15 +1012,21 @@
                 return;
             }
             
+            const repoName = CLASS_REPO[selectedClass];
+            if (!repoName) {
+                showAcknowledgement('Error', `No repository configured for class ${selectedClass}`, false);
+                return;
+            }
+            
             uploadBtn.disabled = true;
             uploadBtn.textContent = '⏳ Uploading...';
             progressContainer.style.display = 'block';
             
             try {
                 if (selectedFolder === 'questions') {
-                    await uploadQuestions(progressFill, progressText);
+                    await uploadQuestions(progressFill, progressText, repoName);
                 } else {
-                    await uploadAnswerKey(progressFill, progressText);
+                    await uploadAnswerKey(progressFill, progressText, repoName);
                 }
             } catch (error) {
                 showAcknowledgement('Upload Failed', `Error: ${error.message}`, false);
@@ -1019,7 +1037,7 @@
             }
         }
         
-        async function uploadQuestions(progressFill, progressText) {
+        async function uploadQuestions(progressFill, progressText, repoName) {
             if (selectedFiles.length === 0) throw new Error('No files selected');
             
             let success = 0;
@@ -1027,19 +1045,20 @@
             
             for (let i = 0; i < selectedFiles.length; i++) {
                 const file = selectedFiles[i];
+                const questionNumber = i + 1;
+                const fileName = `${questionNumber}.png`;
                 const percent = Math.round((i / selectedFiles.length) * 100);
                 progressFill.style.width = `${percent}%`;
                 progressFill.textContent = `${percent}%`;
-                progressText.textContent = `Uploading ${file.name}... (${i+1}/${selectedFiles.length})`;
+                progressText.textContent = `Uploading Q${questionNumber} (${file.name})... (${i+1}/${selectedFiles.length})`;
                 
                 try {
                     const base64Content = await fileToBase64(file);
-                    const filePath = `${selectedClass}/questions/${file.name}`;
-                    await uploadToGitHub(filePath, base64Content);
+                    await uploadToGitHub(repoName, fileName, base64Content);
                     success++;
                 } catch (error) {
-                    failed.push(file.name);
-                    console.error(`Failed: ${file.name}`, error);
+                    failed.push(`Q${questionNumber}`);
+                    console.error(`Failed: Q${questionNumber}`, error);
                 }
             }
             
@@ -1047,7 +1066,7 @@
             progressFill.textContent = '100%';
             
             if (success === selectedFiles.length) {
-                showAcknowledgement('Upload Successful!', `✅ ${success} files uploaded\n📁 ${selectedClass}\n🔄 Exam will update in 1-2 minutes`, true);
+                showAcknowledgement('Upload Successful!', `✅ ${success} questions uploaded to ${selectedClass} repo\n📁 Files: 1.png to ${success}.png\n🔄 Exam will update in 1-2 minutes`, true);
                 selectedFiles = [];
                 document.getElementById('fileInput').value = '';
                 updateFileList();
@@ -1059,7 +1078,7 @@
             }
         }
         
-        async function uploadAnswerKey(progressFill, progressText) {
+        async function uploadAnswerKey(progressFill, progressText, repoName) {
             const className = selectedClass;
             const textarea = document.getElementById('notepadContent');
             let content = textarea.value.trim();
@@ -1114,14 +1133,16 @@
             pdfContent += `\n${'─'.repeat(50)}`;
             pdfContent += `\nTotal Questions: ${tokens.length}`;
             
-            const base64Content = btoa(unescape(encodeURIComponent(content)));
+            // Format for answer-key.txt (plain text with 5 per row)
+            const answerKeyContent = content;
+            const base64Content = btoa(unescape(encodeURIComponent(answerKeyContent)));
             
             progressFill.style.width = '70%';
             progressFill.textContent = '70%';
             progressText.textContent = 'Uploading to GitHub...';
             
-            const filePath = `${className}/answers/${className}_${filenameDate}.txt`;
-            await uploadToGitHub(filePath, base64Content);
+            const filePath = `answer-key.txt`;
+            await uploadToGitHub(repoName, filePath, base64Content);
             
             progressFill.style.width = '90%';
             progressFill.textContent = '90%';
@@ -1151,7 +1172,7 @@
             progressFill.style.width = '100%';
             progressFill.textContent = '100%';
             
-            showAcknowledgement('Answer Key Uploaded!', `✅ Section ${section} | ${shortDate}\n📊 ${tokens.length} answers\n📁 ${filePath}\n\n🔄 Exam will update in 1-2 minutes`, true);
+            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n🔄 Exam will update in 1-2 minutes`, true);
             
             textarea.value = '';
             updateAnswerCount();
