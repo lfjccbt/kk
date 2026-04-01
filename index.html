@@ -516,6 +516,272 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 style="color: #4B0082;">⚙️ Exam Configuration Panel</h3>
             <button id="closeAdminPanel" style="background: #dc3545; color: white; padding: 5px 15px;">✖ Close</button>
+      <!-- ========== EXAM CONFIGURATION EDITOR ========== -->
+<div class="config-editor" style="background: #f8f9fa; border: 2px solid #4B0082; border-radius: 10px; padding: 20px; margin-top: 30px;">
+    <h3 style="color: #4B0082; margin-bottom: 15px;">⚙️ Exam Configuration Editor</h3>
+    
+    <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold;">🔑 GitHub Token:</label>
+        <input type="password" id="configToken" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your GitHub token (starts with ghp_)">
+        <small id="tokenStatus" style="color: #666;"></small>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold;">📚 Select Class to Configure:</label>
+        <select id="configClass" style="width: 100%; padding: 8px; margin-top: 5px;">
+            <option value="1D">Class 1D</option>
+            <option value="1M">Class 1M</option>
+            <option value="1N">Class 1N</option>
+            <option value="1E">Class 1E</option>
+            <option value="2D">Class 2D</option>
+            <option value="2M">Class 2M</option>
+            <option value="2N">Class 2N</option>
+            <option value="2E">Class 2E</option>
+        </select>
+        <button id="loadConfigBtn" style="background: #17a2b8; color: white; margin-top: 5px; padding: 5px 15px;">Load Current Config</button>
+    </div>
+    
+    <div id="configForm" style="display: none;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label>⏱️ Duration (minutes):</label>
+                <input type="number" id="configDuration" style="width: 100%; padding: 8px;">
+            </div>
+            <div>
+                <label>✅ Correct Answer Mark:</label>
+                <input type="number" id="configCorrectMark" step="0.5" style="width: 100%; padding: 8px;">
+            </div>
+            <div>
+                <label>❌ Wrong Answer Mark:</label>
+                <input type="number" id="configWrongMark" step="0.5" style="width: 100%; padding: 8px;">
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold;">📚 Subjects & Questions:</label>
+            <div id="subjectsList"></div>
+            <button id="addSubjectBtn" style="background: #28a745; color: white; margin-top: 5px; padding: 5px 15px;">+ Add Subject</button>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold;">📤 Active Subjects for Google Forms:</label>
+            <div id="activeSubjectsList"></div>
+        </div>
+        
+        <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 10px 20px; width: 100%;">💾 Save Configuration to GitHub</button>
+    </div>
+    
+    <div id="configMessage" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+</div>
+
+<script>
+// ========== CONFIG EDITOR FOR TEACHER PORTAL ==========
+(function() {
+    const REPO_OWNER = 'lfjccbt';
+    let currentClass = '1D';
+    let currentConfig = null;
+    let githubToken = localStorage.getItem('teacher_github_token') || '';
+    
+    // Load saved token
+    const tokenInput = document.getElementById('configToken');
+    if (githubToken) {
+        tokenInput.value = githubToken;
+        document.getElementById('tokenStatus').innerHTML = '✓ Token loaded';
+    }
+    
+    // Save token to localStorage
+    tokenInput.addEventListener('change', function() {
+        githubToken = this.value.trim();
+        if (githubToken.startsWith('ghp_')) {
+            localStorage.setItem('teacher_github_token', githubToken);
+            document.getElementById('tokenStatus').innerHTML = '✓ Token saved';
+        } else {
+            document.getElementById('tokenStatus').innerHTML = '❌ Invalid token';
+        }
+    });
+    
+    // Load config from selected class
+    async function loadConfig() {
+        const classValue = document.getElementById('configClass').value;
+        currentClass = classValue;
+        
+        const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${currentClass}/main/config.json?t=${Date.now()}`;
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                currentConfig = await response.json();
+                displayConfig();
+                document.getElementById('configForm').style.display = 'block';
+                showMessage('Config loaded for ' + currentClass, 'success');
+            } else {
+                // Use default config
+                currentConfig = {
+                    duration: 180,
+                    correctMark: 1,
+                    wrongMark: 0,
+                    activeForForms: ["MATHS", "PHYSICS", "CHEMISTRY"],
+                    subjects: [
+                        { name: "MATHS", questions: 80, numerical: 0 },
+                        { name: "PHYSICS", questions: 40, numerical: 0 },
+                        { name: "CHEMISTRY", questions: 40, numerical: 0 }
+                    ]
+                };
+                displayConfig();
+                document.getElementById('configForm').style.display = 'block';
+                showMessage('No existing config for ' + currentClass + '. Using defaults.', 'info');
+            }
+        } catch(e) {
+            showMessage('Error loading config: ' + e.message, 'error');
+        }
+    }
+    
+    // Display config in form
+    function displayConfig() {
+        document.getElementById('configDuration').value = currentConfig.duration;
+        document.getElementById('configCorrectMark').value = currentConfig.correctMark;
+        document.getElementById('configWrongMark').value = currentConfig.wrongMark;
+        
+        // Display subjects
+        const subjectsDiv = document.getElementById('subjectsList');
+        subjectsDiv.innerHTML = '';
+        currentConfig.subjects.forEach((subject, idx) => {
+            const div = document.createElement('div');
+            div.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center;';
+            div.innerHTML = `
+                <input type="text" value="${subject.name}" style="flex: 2; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" data-subject-name="${idx}">
+                <input type="number" value="${subject.questions}" style="flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" data-subject-questions="${idx}">
+                <input type="number" value="${subject.numerical}" style="flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" data-subject-numerical="${idx}">
+                <button class="remove-subject" data-idx="${idx}" style="background: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">✖</button>
+            `;
+            subjectsDiv.appendChild(div);
+        });
+        
+        // Add event listeners
+        document.querySelectorAll('[data-subject-name]').forEach(inp => {
+            inp.addEventListener('change', function() {
+                currentConfig.subjects[this.dataset.subjectName].name = this.value;
+            });
+        });
+        document.querySelectorAll('[data-subject-questions]').forEach(inp => {
+            inp.addEventListener('change', function() {
+                currentConfig.subjects[this.dataset.subjectQuestions].questions = parseInt(this.value) || 0;
+            });
+        });
+        document.querySelectorAll('[data-subject-numerical]').forEach(inp => {
+            inp.addEventListener('change', function() {
+                currentConfig.subjects[this.dataset.subjectNumerical].numerical = parseInt(this.value) || 0;
+            });
+        });
+        document.querySelectorAll('.remove-subject').forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentConfig.subjects.splice(parseInt(this.dataset.idx), 1);
+                displayConfig();
+            });
+        });
+        
+        // Display active subjects checkboxes
+        const activeDiv = document.getElementById('activeSubjectsList');
+        activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+        currentConfig.subjects.forEach(subject => {
+            const isActive = currentConfig.activeForForms.includes(subject.name);
+            activeDiv.innerHTML += `
+                <label style="display: flex; align-items: center; gap: 5px;">
+                    <input type="checkbox" class="active-checkbox" data-subject="${subject.name}" ${isActive ? 'checked' : ''}>
+                    ${subject.name}
+                </label>
+            `;
+        });
+        activeDiv.innerHTML += '</div>';
+        
+        document.querySelectorAll('.active-checkbox').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const subject = this.dataset.subject;
+                if (this.checked) {
+                    if (!currentConfig.activeForForms.includes(subject)) {
+                        currentConfig.activeForForms.push(subject);
+                    }
+                } else {
+                    currentConfig.activeForForms = currentConfig.activeForForms.filter(s => s !== subject);
+                }
+            });
+        });
+    }
+    
+    // Add subject button
+    document.getElementById('addSubjectBtn').addEventListener('click', () => {
+        currentConfig.subjects.push({ name: "NEW_SUBJECT", questions: 40, numerical: 0 });
+        displayConfig();
+    });
+    
+    // Save config to GitHub
+    async function saveConfig() {
+        if (!githubToken || !githubToken.startsWith('ghp_')) {
+            showMessage('Please enter a valid GitHub token', 'error');
+            return;
+        }
+        
+        const classValue = document.getElementById('configClass').value;
+        const configData = {
+            duration: parseInt(document.getElementById('configDuration').value) || 180,
+            correctMark: parseFloat(document.getElementById('configCorrectMark').value) || 1,
+            wrongMark: parseFloat(document.getElementById('configWrongMark').value) || 0,
+            activeForForms: currentConfig.activeForForms,
+            subjects: currentConfig.subjects
+        };
+        
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData, null, 2))));
+        
+        try {
+            // Check if file exists
+            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classValue}/contents/config.json`, {
+                headers: { 'Authorization': `token ${githubToken}` }
+            });
+            
+            let sha = null;
+            if (checkRes.ok) {
+                const data = await checkRes.json();
+                sha = data.sha;
+            }
+            
+            // Save file
+            const saveRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classValue}/contents/config.json`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Update exam config for ${classValue}`,
+                    content: content,
+                    sha: sha,
+                    branch: 'main'
+                })
+            });
+            
+            if (saveRes.ok) {
+                showMessage(`✅ Config saved to ${classValue}/config.json`, 'success');
+            } else {
+                throw new Error('Save failed');
+            }
+        } catch(e) {
+            showMessage('Error saving: ' + e.message, 'error');
+        }
+    }
+    
+    function showMessage(msg, type) {
+        const msgDiv = document.getElementById('configMessage');
+        msgDiv.textContent = msg;
+        msgDiv.style.display = 'block';
+        msgDiv.style.background = type === 'error' ? '#f8d7da' : (type === 'success' ? '#d4edda' : '#d1ecf1');
+        msgDiv.style.color = type === 'error' ? '#721c24' : (type === 'success' ? '#155724' : '#0c5460');
+        setTimeout(() => msgDiv.style.display = 'none', 5000);
+    }
+    
+    document.getElementById('loadConfigBtn').addEventListener('click', loadConfig);
+    document.getElementById('saveConfigBtn').addEventListener('click', saveConfig);
+})();
+</script>
+<!-- ========== END CONFIG EDITOR ========== -->
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
