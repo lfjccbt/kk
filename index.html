@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LFJC Teacher Portal</title>
+    <style>
+        /* ALL YOUR EXISTING CSS - SAME AS BEFORE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .date-section {
+            background: #f0f4f8;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .date-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .date-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-picker label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .date-picker input {
+            padding: 8px 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .date-note {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 8px;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .class-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .class-btn {
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .class-btn:hover {
+            border-color: #667eea;
+        }
+        
+        .class-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .folder-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .folder-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .folder-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .folder-btn.active {
+            border-color: transparent;
+        }
+        
+        .folder-btn.questions.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .folder-btn.answers.active {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        
+        .folder-btn h4 {
+            margin-bottom: 5px;
+        }
+        
+        .upload-section {
+            margin-top: 20px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            background: white;
+            margin: 20px 0;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+        }
+        
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .file-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+        }
+        
+        .file-item {
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .notepad-container {
+            margin-top: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .notepad-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 15px;
+        }
+        
+        .notepad-header h3 {
+            font-size: 16px;
+        }
+        
+        .notepad-textarea {
+            width: 100%;
+            height: 300px;
+            padding: 20px;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            line-height: 1.6;
+            resize: vertical;
+            background: #fafafa;
+            letter-spacing: 1px;
+            caret-color: #667eea;
+        }
+        
+        .notepad-textarea:focus {
+            outline: none;
+            background: white;
+        }
+        
+        .notepad-footer {
+            background: #fffef0;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .print-header {
+            display: none;
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #43e97b;
+            text-align: center;
+        }
+        
+        .print-header h2 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 18px;
+        }
+        
+        .action-buttons {
+            margin-top: 30px;
+        }
+        
+        .upload-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .acknowledgement-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .acknowledgement-box {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .acknowledgement-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .acknowledgement-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .acknowledgement-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        
+        .acknowledgement-close {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .acknowledgement-close:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .class-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .folder-options {
+                grid-template-columns: 1fr;
+            }
+            .date-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .notepad-textarea {
+                font-size: 16px;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .header, .date-section, .class-options, .folder-options, 
+            .upload-area, .action-buttons,
+            .notepad-header, .notepad-footer, .upload-btn, .file-list,
+            .progress-container {
+                display: none !important;
+            }
+            .print-header {
+                display: block !important;
+            }
+            .notepad-container {
+                border: none;
+                margin-top: 0;
+            }
+            .notepad-textarea {
+                border: none;
+                height: auto;
+                font-size: 12px;
+                background: white;
+                padding: 20px;
+                font-family: 'Courier New', monospace;
+                line-height: 1.8;
+            }
+            .main-content {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 LFJC Teacher Portal</h1>
+            <p>Upload questions and answer keys</p>
+        </div>
+        
+        <div class="date-section">
+            <div class="date-container">
+                <div class="date-picker">
+                    <label>📅 Select Date:</label>
+                    <input type="date" id="selectedDate">
+                </div>
+            </div>
+            <div class="date-note">
+                ⓘ Date shows as DD/MM/YY in header and filename
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="form-group">
+                <label>Select Class</label>
+                <div class="class-options">
+                    <div class="class-btn active" data-class="1D">Class 1D</div>
+                    <div class="class-btn" data-class="1M">Class 1M</div>
+                    <div class="class-btn" data-class="1N">Class 1N</div>
+                    <div class="class-btn" data-class="1E">Class 1E</div>
+                    <div class="class-btn" data-class="2D">Class 2D</div>
+                    <div class="class-btn" data-class="2M">Class 2M</div>
+                    <div class="class-btn" data-class="2N">Class 2N</div>
+                    <div class="class-btn" data-class="2E">Class 2E</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Select Upload Type</label>
+                <div class="folder-options">
+                    <div class="folder-btn questions active" data-folder="questions">
+                        <h4>📝 Questions</h4>
+                        <p>Upload question files</p>
+                    </div>
+                    <div class="folder-btn answers" data-folder="answers">
+                        <h4>✅ Answers</h4>
+                        <p>Type and upload answer key</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="upload-section" id="questionUploadSection">
+                <label id="folderLabel">Select Files for Questions</label>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📂</div>
+                    <h3>Click to Browse Files</h3>
+                    <p>or drag and drop files here</p>
+                </div>
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <div class="file-list" id="fileList"></div>
+            </div>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+                <p id="progressText" style="text-align: center; margin-top: 10px; font-size: 12px;"></p>
+            </div>
+            
+            <div class="notepad-container" id="notepadContainer" style="display: none;">
+                <div class="notepad-header">
+                    <h3>Answer Key - Class <span id="notepadClass">1D</span></h3>
+                </div>
+                <textarea class="notepad-textarea" id="notepadContent" placeholder="Type letters (A-D) or numbers - 5 per row auto-enter"></textarea>
+                <div class="notepad-footer">
+                    <div>Total answers: <span id="answerCount">0</span></div>
+                    <div>5 per row (auto-enter)</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="upload-btn" id="uploadBtn" disabled>
+                    📤 Upload Files
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="acknowledgement-overlay" id="acknowledgementOverlay">
+        <div class="acknowledgement-box">
+            <div class="acknowledgement-icon" id="ackIcon">✅</div>
+            <div class="acknowledgement-title" id="ackTitle">Upload Successful!</div>
+            <div class="acknowledgement-message" id="ackMessage"></div>
+            <button class="acknowledgement-close" onclick="closeAcknowledgement()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIGURATION ==========
+        const REPO_OWNER = 'iitjeelf';
+        const REPO_NAME = 'PS';
+        
+        // Google Drive Backup (optional)
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbz93UeEM0siHeoYUgf5l9w8wfvg4Z8RVz4Sr9Lh4iL84yR-kSqC4nrjKWIlabq-z-_-9Q/exec';
+        const GOOGLE_DRIVE_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
+        
+        // ========== STATE ==========
+        let selectedFiles = [];
+        let selectedClass = "1D";
+        let selectedFolder = "questions";
+        
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            initializeDatePicker();
+            updateUI();
+        });
+        
+        // ========== DATE FUNCTIONS ==========
+        function initializeDatePicker() {
+            const dateInput = document.getElementById('selectedDate');
+            const today = new Date();
+            dateInput.value = formatDateForInput(today);
+            dateInput.addEventListener('change', updatePrintHeader);
+        }
+        
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDateForDisplay(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year.slice(-2)}`;
+        }
+        
+        function updatePrintHeader() {
+            const notepadContainer = document.getElementById('notepadContainer');
+            const selectedDate = document.getElementById('selectedDate').value;
+            const shortDate = formatDateForDisplay(selectedDate);
+            
+            const existingHeader = document.getElementById('printHeader');
+            if (existingHeader) existingHeader.remove();
+            
+            const printHeader = document.createElement('div');
+            printHeader.id = 'printHeader';
+            printHeader.className = 'print-header';
+            printHeader.innerHTML = `<h2>LFJC ${selectedClass} - ${shortDate} KEY</h2>`;
+            notepadContainer.insertBefore(printHeader, notepadContainer.firstChild);
+        }
+        
+        // ========== UPLOAD USING GITHUB API (WITHOUT TOKEN IN HTML) ==========
+        async function uploadToGitHub(filePath, base64Content) {
+            // This triggers a GitHub Action that has the token
+            const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    event_type: 'upload',
+                    client_payload: {
+                        path: filePath,
+                        content: base64Content
+                    }
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`GitHub API error: ${response.status}`);
+            }
+            
+            return true;
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // ========== UI FUNCTIONS ==========
+        function setupEventListeners() {
+            document.querySelectorAll('.class-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedClass = this.dataset.class;
+                    document.getElementById('notepadClass').textContent = selectedClass;
+                    updatePrintHeader();
+                    updateUI();
+                });
+            });
+            
+            document.querySelectorAll('.folder-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedFolder = this.dataset.folder;
+                    updateUI();
+                    
+                    if (selectedFolder === 'answers') {
+                        const textarea = document.getElementById('notepadContent');
+                        textarea.value = '';
+                        updateAnswerCount();
+                        updatePrintHeader();
+                    }
+                });
+            });
+            
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                selectedFiles = Array.from(e.target.files);
+                updateFileList();
+                updateUploadButton();
+            });
+            
+            const textarea = document.getElementById('notepadContent');
+            
+            textarea.addEventListener('keydown', function(e) {
+                if ([8, 9, 13, 16, 17, 18, 20, 27, 37, 38, 39, 40, 46].includes(e.keyCode)) {
+                    return true;
+                }
+                
+                const allowedKeys = /^[a-dA-D0-9]$/;
+                if (!allowedKeys.test(e.key) && e.key.length === 1) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            textarea.addEventListener('input', function(e) {
+                const cursorPos = textarea.selectionStart;
+                let value = textarea.value;
+                
+                value = value.toUpperCase();
+                value = value.replace(/[^ABCD0-9\n]/g, '');
+                
+                const textBeforeCursor = value.substring(0, cursorPos);
+                const linesBefore = textBeforeCursor.split('\n');
+                const currentLine = linesBefore[linesBefore.length - 1];
+                
+                const typedChar = e.data ? e.data.toUpperCase() : '';
+                if (/^[ABCD0-9]$/.test(typedChar)) {
+                    const charsInLine = currentLine.replace(/[^ABCD0-9]/g, '').length;
+                    
+                    if (charsInLine === 5) {
+                        const beforeText = value.substring(0, cursorPos);
+                        const afterText = value.substring(cursorPos);
+                        value = beforeText + '\n' + afterText;
+                        
+                        textarea.value = value;
+                        
+                        const newCursorPos = cursorPos + 1;
+                        setTimeout(() => {
+                            textarea.setSelectionRange(newCursorPos, newCursorPos);
+                        }, 0);
+                        
+                        updateAnswerCount();
+                        updateUploadButton();
+                        return;
+                    }
+                }
+                
+                const lines = value.split('\n');
+                let formattedLines = [];
+                
+                for (let line of lines) {
+                    if (line.length === 0) {
+                        formattedLines.push('');
+                        continue;
+                    }
+                    
+                    if (/^[ABCD0-9]+$/.test(line)) {
+                        for (let i = 0; i < line.length; i += 5) {
+                            const chunk = line.substring(i, i + 5);
+                            if (chunk) formattedLines.push(chunk);
+                        }
+                    } else {
+                        formattedLines.push(line);
+                    }
+                }
+                
+                const newValue = formattedLines.join('\n');
+                
+                if (newValue !== value) {
+                    textarea.value = newValue;
+                    
+                    let newCursorPos = cursorPos;
+                    if (newValue.length !== value.length) {
+                        newCursorPos = Math.max(0, Math.min(cursorPos, newValue.length));
+                    }
+                    
+                    setTimeout(() => {
+                        textarea.setSelectionRange(newCursorPos, newCursorPos);
+                    }, 0);
+                }
+                
+                updateAnswerCount();
+                updateUploadButton();
+            });
+            
+            const dropArea = document.querySelector('.upload-area');
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#667eea';
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#d1d5db';
+                selectedFiles = Array.from(e.dataTransfer.files);
+                updateFileList();
+                updateUploadButton();
+            });
+        }
+        
+        function updateUI() {
+            const notepadContainer = document.getElementById('notepadContainer');
+            const questionSection = document.getElementById('questionUploadSection');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const folderLabel = document.getElementById('folderLabel');
+            
+            if (selectedFolder === 'answers') {
+                notepadContainer.style.display = 'block';
+                questionSection.style.display = 'none';
+                uploadBtn.textContent = '📤 Upload Answer Key';
+                folderLabel.textContent = 'Type Answer Key Below';
+                updatePrintHeader();
+            } else {
+                notepadContainer.style.display = 'none';
+                questionSection.style.display = 'block';
+                uploadBtn.textContent = '📤 Upload Files';
+                folderLabel.textContent = 'Select Files for Questions';
+            }
+            
+            updateUploadButton();
+        }
+        
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            
+            if (selectedFiles.length > 0) {
+                fileList.innerHTML = selectedFiles.map(file => 
+                    `<div class="file-item">📄 ${file.name} (${formatSize(file.size)})</div>`
+                ).join('');
+            } else {
+                fileList.innerHTML = '';
+            }
+        }
+        
+        function updateUploadButton() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            if (selectedFolder === 'questions') {
+                uploadBtn.disabled = selectedFiles.length === 0;
+            } else {
+                const content = document.getElementById('notepadContent').value.trim();
+                uploadBtn.disabled = content.length === 0;
+            }
+        }
+        
+        function updateAnswerCount() {
+            const content = document.getElementById('notepadContent').value;
+            const letters = content.match(/[ABCD]/g) || [];
+            const numberSequences = content.match(/[0-9]+/g) || [];
+            const totalAnswers = letters.length + numberSequences.length;
+            document.getElementById('answerCount').textContent = totalAnswers;
+        }
+        
+        function showAcknowledgement(title, message, isSuccess) {
+            const overlay = document.getElementById('acknowledgementOverlay');
+            const icon = document.getElementById('ackIcon');
+            const ackTitle = document.getElementById('ackTitle');
+            const ackMessage = document.getElementById('ackMessage');
+            
+            if (isSuccess) {
+                icon.textContent = '✅';
+                icon.style.color = '#10b981';
+                ackTitle.style.color = '#065f46';
+            } else {
+                icon.textContent = '❌';
+                icon.style.color = '#ef4444';
+                ackTitle.style.color = '#7f1d1d';
+            }
+            
+            ackTitle.textContent = title;
+            ackMessage.textContent = message;
+            overlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                if (overlay.style.display === 'flex') {
+                    closeAcknowledgement();
+                }
+            }, 5000);
+        }
+        
+        function closeAcknowledgement() {
+            document.getElementById('acknowledgementOverlay').style.display = 'none';
+        }
+        
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        // ========== MAIN UPLOAD FUNCTIONS ==========
+        async function startUpload() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const originalText = uploadBtn.textContent;
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Uploading...';
+            progressContainer.style.display = 'block';
+            
+            try {
+                if (selectedFolder === 'questions') {
+                    await uploadQuestions(progressFill, progressText);
+                } else {
+                    await uploadAnswerKey(progressFill, progressText);
+                }
+            } catch (error) {
+                showAcknowledgement('Upload Failed', `Error: ${error.message}`, false);
+            } finally {
+                progressContainer.style.display = 'none';
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = originalText;
+            }
+        }
+        
+        async function uploadQuestions(progressFill, progressText) {
+            if (selectedFiles.length === 0) throw new Error('No files selected');
+            
+            let success = 0;
+            let failed = [];
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const percent = Math.round((i / selectedFiles.length) * 100);
+                progressFill.style.width = `${percent}%`;
+                progressFill.textContent = `${percent}%`;
+                progressText.textContent = `Uploading ${file.name}... (${i+1}/${selectedFiles.length})`;
+                
+                try {
+                    const base64Content = await fileToBase64(file);
+                    const filePath = `${selectedClass}/questions/${file.name}`;
+                    await uploadToGitHub(filePath, base64Content);
+                    success++;
+                } catch (error) {
+                    failed.push(file.name);
+                    console.error(`Failed: ${file.name}`, error);
+                }
+            }
+            
+            progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            
+            if (success === selectedFiles.length) {
+                showAcknowledgement('Upload Successful!', `✅ ${success} files uploaded\n📁 ${selectedClass}\n🔄 Exam will update in 1-2 minutes`, true);
+                selectedFiles = [];
+                document.getElementById('fileInput').value = '';
+                updateFileList();
+                updateUploadButton();
+            } else if (success > 0) {
+                showAcknowledgement('Partial Upload', `⚠️ ${success} uploaded, ${failed.length} failed\nFailed: ${failed.join(', ')}`, false);
+            } else {
+                throw new Error('Failed to upload any files');
+            }
+        }
+        
+        async function uploadAnswerKey(progressFill, progressText) {
+            const className = selectedClass;
+            const textarea = document.getElementById('notepadContent');
+            let content = textarea.value.trim();
+            const selectedDate = document.getElementById('selectedDate').value;
+            const section = selectedClass;
+            
+            if (content.length === 0) throw new Error('Answer key is empty');
+            
+            progressFill.style.width = '30%';
+            progressFill.textContent = '30%';
+            progressText.textContent = 'Processing answer key...';
+            
+            const lines = content.split('\n').filter(line => line.trim() !== '');
+            const tokens = [];
+            
+            for (let line of lines) {
+                let i = 0;
+                while (i < line.length) {
+                    if (line[i].match(/[ABCD]/)) {
+                        tokens.push(line[i]);
+                        i++;
+                    } else if (line[i].match(/[0-9]/)) {
+                        let num = '';
+                        while (i < line.length && line[i].match(/[0-9]/)) {
+                            num += line[i];
+                            i++;
+                        }
+                        tokens.push(num);
+                    } else {
+                        i++;
+                    }
+                }
+            }
+            
+            const [year, month, day] = selectedDate.split('-');
+            const shortDate = `${day}/${month}/${year.slice(-2)}`;
+            const filenameDate = `${day}-${month}-${year.slice(-2)}`;
+            
+            let pdfContent = `LFJC ${section} - ${shortDate} KEY\n`;
+            pdfContent += `${'─'.repeat(50)}\n\n`;
+            
+            let line = '';
+            for (let i = 0; i < tokens.length; i++) {
+                line += `${i+1})${tokens[i]} `;
+                if ((i + 1) % 10 === 0) {
+                    pdfContent += line + '\n';
+                    line = '';
+                }
+            }
+            if (line) pdfContent += line + '\n';
+            
+            pdfContent += `\n${'─'.repeat(50)}`;
+            pdfContent += `\nTotal Questions: ${tokens.length}`;
+            
+            const base64Content = btoa(unescape(encodeURIComponent(content)));
+            
+            progressFill.style.width = '70%';
+            progressFill.textContent = '70%';
+            progressText.textContent = 'Uploading to GitHub...';
+            
+            const filePath = `${className}/answers/${className}_${filenameDate}.txt`;
+            await uploadToGitHub(filePath, base64Content);
+            
+            progressFill.style.width = '90%';
+            progressFill.textContent = '90%';
+            progressText.textContent = 'Sending to Google Drive backup...';
+            
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        class: selectedClass,
+                        content: pdfContent,
+                        rawContent: content,
+                        date: selectedDate,
+                        shortDate: shortDate,
+                        filenameDate: filenameDate,
+                        section: section,
+                        folderId: GOOGLE_DRIVE_FOLDER_ID
+                    })
+                });
+                console.log('✅ Sent to Google Drive');
+            } catch (e) {
+                console.log('Google Drive backup optional:', e);
+            }
+            
+            progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            
+            showAcknowledgement('Answer Key Uploaded!', `✅ Section ${section} | ${shortDate}\n📊 ${tokens.length} answers\n📁 ${filePath}\n\n🔄 Exam will update in 1-2 minutes`, true);
+            
+            textarea.value = '';
+            updateAnswerCount();
+            updateUploadButton();
+        }
+        
+        document.getElementById('uploadBtn').onclick = startUpload;
+    </script>
+</body>
+</html>
