@@ -470,13 +470,14 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 28px;
+            font-size: 32px;
             color: #4B0082;
             transition: all 0.3s ease;
             background: #f0f0f0;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
+            margin: 0 auto;
         }
         
         .config-icon:hover {
@@ -634,6 +635,12 @@
             .token-container {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            .subject-input-row {
+                flex-wrap: wrap;
+            }
+            .subject-input-row select, .subject-input-row input {
+                flex: 1 1 100%;
             }
         }
         
@@ -807,11 +814,6 @@
                         <label style="font-weight: 800;">📚 Subjects & Questions:</label>
                         <div id="subjectsConfigList"></div>
                         <button id="addSubjectConfigBtn" style="background: #28a745; color: white; margin-top: 5px; padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 800;">+ Add Subject</button>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <label style="font-weight: 800;">📤 Active Subjects:</label>
-                        <div id="activeSubjectsConfigList"></div>
                     </div>
                     
                     <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 12px 20px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: 800;">💾 Save Configuration</button>
@@ -1364,8 +1366,11 @@
                             duration: 180,
                             correctMark: 1,
                             wrongMark: 0,
-                            activeForForms: [],
-                            subjects: []
+                            subjects: [
+                                { name: "MATHS", questions: 80, numerical: 0 },
+                                { name: "PHYSICS", questions: 40, numerical: 0 },
+                                { name: "CHEMISTRY", questions: 40, numerical: 0 }
+                            ]
                         };
                     }
                     displayConfig();
@@ -1385,7 +1390,7 @@
                 
                 const subjectOptions = ['MATHS', 'PHYSICS', 'CHEMISTRY', 'BOTANY', 'ZOOLOGY', 'MATHS_A', 'MATHS_B', 'BZ'];
                 
-                if (currentConfig.subjects.length === 0) {
+                if (!currentConfig.subjects || currentConfig.subjects.length === 0) {
                     currentConfig.subjects = [
                         { name: "MATHS", questions: 80, numerical: 0 },
                         { name: "PHYSICS", questions: 40, numerical: 0 },
@@ -1410,7 +1415,6 @@
                 document.querySelectorAll('.subject-name-select').forEach(select => {
                     select.addEventListener('change', function() {
                         currentConfig.subjects[this.dataset.idx].name = this.value;
-                        updateActiveSubjectsCheckboxes();
                     });
                 });
                 
@@ -1430,38 +1434,6 @@
                     btn.addEventListener('click', function() {
                         currentConfig.subjects.splice(parseInt(this.dataset.idx), 1);
                         displayConfig();
-                    });
-                });
-                
-                updateActiveSubjectsCheckboxes();
-            }
-            
-            function updateActiveSubjectsCheckboxes() {
-                const activeDiv = document.getElementById('activeSubjectsConfigList');
-                activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;">';
-                
-                currentConfig.subjects.forEach(subject => {
-                    const isActive = currentConfig.activeForForms && currentConfig.activeForForms.includes(subject.name);
-                    activeDiv.innerHTML += `
-                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
-                            <input type="checkbox" class="active-checkbox-config" data-subject="${subject.name}" ${isActive ? 'checked' : ''}>
-                            ${subject.name}
-                        </label>
-                    `;
-                });
-                activeDiv.innerHTML += '</div>';
-                
-                document.querySelectorAll('.active-checkbox-config').forEach(cb => {
-                    cb.addEventListener('change', function() {
-                        const subject = this.dataset.subject;
-                        if (!currentConfig.activeForForms) currentConfig.activeForForms = [];
-                        if (this.checked) {
-                            if (!currentConfig.activeForForms.includes(subject)) {
-                                currentConfig.activeForForms.push(subject);
-                            }
-                        } else {
-                            currentConfig.activeForForms = currentConfig.activeForForms.filter(s => s !== subject);
-                        }
                     });
                 });
             }
@@ -1484,7 +1456,6 @@
                     duration: parseInt(document.getElementById('configDuration').value) || 180,
                     correctMark: parseFloat(document.getElementById('configCorrectMark').value) || 1,
                     wrongMark: parseFloat(document.getElementById('configWrongMark').value) || 0,
-                    activeForForms: currentConfig.activeForForms || [],
                     subjects: currentConfig.subjects
                 };
                 
