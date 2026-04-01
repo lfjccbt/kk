@@ -561,7 +561,7 @@
                     </div>
                     <div class="folder-btn answers" data-folder="answers">
                         <h4>✅ Answers</h4>
-                        <p>Upload to repo root as answer-key.txt</p>
+                        <p>Type and upload answer key (5 per row auto-enter)</p>
                     </div>
                 </div>
             </div>
@@ -592,7 +592,7 @@
                 <textarea class="notepad-textarea" id="notepadContent" placeholder="Type letters (A-D) or numbers - 5 per row auto-enter"></textarea>
                 <div class="notepad-footer">
                     <div>Total answers: <span id="answerCount">0</span></div>
-                    <div>5 per row (auto-enter) → Saves as answer-key.txt</div>
+                    <div>5 per row (auto-enter)</div>
                 </div>
             </div>
             
@@ -739,7 +739,7 @@
             });
         }
         
-        // ========== UI FUNCTIONS ==========
+        // ========== ORIGINAL NOTEPAD LOGIC (5 per row, capitals, auto-enter) ==========
         function setupEventListeners() {
             document.querySelectorAll('.class-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -759,7 +759,8 @@
                     selectedFolder = this.dataset.folder;
                     updateUI();
                     if (selectedFolder === 'answers') {
-                        document.getElementById('notepadContent').value = '';
+                        const textarea = document.getElementById('notepadContent');
+                        textarea.value = '';
                         updateAnswerCount();
                         updatePrintHeader();
                     }
@@ -772,8 +773,76 @@
                 updateUploadButton();
             });
             
+            // ===== ORIGINAL NOTEPAD LOGIC (5 per row, auto-enter, capitals) =====
             const textarea = document.getElementById('notepadContent');
-            textarea.addEventListener('input', function() {
+            
+            textarea.addEventListener('keydown', function(e) {
+                if ([8, 9, 13, 16, 17, 18, 20, 27, 37, 38, 39, 40, 46].includes(e.keyCode)) {
+                    return true;
+                }
+                const allowedKeys = /^[a-dA-D0-9]$/;
+                if (!allowedKeys.test(e.key) && e.key.length === 1) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            textarea.addEventListener('input', function(e) {
+                const cursorPos = textarea.selectionStart;
+                let value = textarea.value;
+                value = value.toUpperCase();
+                value = value.replace(/[^ABCD0-9\n]/g, '');
+                
+                const textBeforeCursor = value.substring(0, cursorPos);
+                const linesBefore = textBeforeCursor.split('\n');
+                const currentLine = linesBefore[linesBefore.length - 1];
+                
+                const typedChar = e.data ? e.data.toUpperCase() : '';
+                if (/^[ABCD0-9]$/.test(typedChar)) {
+                    const charsInLine = currentLine.replace(/[^ABCD0-9]/g, '').length;
+                    if (charsInLine === 5) {
+                        const beforeText = value.substring(0, cursorPos);
+                        const afterText = value.substring(cursorPos);
+                        value = beforeText + '\n' + afterText;
+                        textarea.value = value;
+                        const newCursorPos = cursorPos + 1;
+                        setTimeout(() => {
+                            textarea.setSelectionRange(newCursorPos, newCursorPos);
+                        }, 0);
+                        updateAnswerCount();
+                        updateUploadButton();
+                        return;
+                    }
+                }
+                
+                const lines = value.split('\n');
+                let formattedLines = [];
+                for (let line of lines) {
+                    if (line.length === 0) {
+                        formattedLines.push('');
+                        continue;
+                    }
+                    if (/^[ABCD0-9]+$/.test(line)) {
+                        for (let i = 0; i < line.length; i += 5) {
+                            const chunk = line.substring(i, i + 5);
+                            if (chunk) formattedLines.push(chunk);
+                        }
+                    } else {
+                        formattedLines.push(line);
+                    }
+                }
+                
+                const newValue = formattedLines.join('\n');
+                if (newValue !== value) {
+                    textarea.value = newValue;
+                    let newCursorPos = cursorPos;
+                    if (newValue.length !== value.length) {
+                        newCursorPos = Math.max(0, Math.min(cursorPos, newValue.length));
+                    }
+                    setTimeout(() => {
+                        textarea.setSelectionRange(newCursorPos, newCursorPos);
+                    }, 0);
+                }
                 updateAnswerCount();
                 updateUploadButton();
             });
@@ -803,7 +872,7 @@
                 notepadContainer.style.display = 'block';
                 questionSection.style.display = 'none';
                 uploadBtn.textContent = '📤 Upload Answer Key';
-                folderLabel.textContent = 'Type Answer Key Below (saves as answer-key.txt)';
+                folderLabel.textContent = 'Type Answer Key Below (5 per row auto-enter)';
                 updatePrintHeader();
             } else {
                 notepadContainer.style.display = 'none';
@@ -842,8 +911,8 @@
         function updateAnswerCount() {
             const content = document.getElementById('notepadContent').value;
             const letters = content.match(/[ABCD]/g) || [];
-            const numbers = content.match(/[0-9]+/g) || [];
-            document.getElementById('answerCount').textContent = letters.length + numbers.length;
+            const numberSequences = content.match(/[0-9]+/g) || [];
+            document.getElementById('answerCount').textContent = letters.length + numberSequences.length;
         }
         
         function showAcknowledgement(title, message, isSuccess) {
@@ -931,19 +1000,22 @@
         }
         
         async function uploadAnswerKey(progressFill, progressText, repoName) {
-            const content = document.getElementById('notepadContent').value.trim();
+            const className = selectedClass;
+            const textarea = document.getElementById('notepadContent');
+            let content = textarea.value.trim();
             const selectedDate = document.getElementById('selectedDate').value;
-            const [year, month, day] = selectedDate.split('-');
-            const shortDate = `${day}/${month}/${year.slice(-2)}`;
-            const filenameDate = `${day}-${month}-${year.slice(-2)}`;
+            const section = selectedClass;
             
-            if (!content) throw new Error('Answer key is empty');
+            if (content.length === 0) throw new Error('Answer key is empty');
             
             progressFill.style.width = '30%';
-            progressText.textContent = 'Processing...';
+            progressFill.textContent = '30%';
+            progressText.textContent = 'Processing answer key...';
             
-            const lines = content.split('\n').filter(l => l.trim() !== '');
+            // Process each line, then each character/number sequence
+            const lines = content.split('\n').filter(line => line.trim() !== '');
             const tokens = [];
+            
             for (let line of lines) {
                 let i = 0;
                 while (i < line.length) {
@@ -952,29 +1024,51 @@
                         i++;
                     } else if (line[i].match(/[0-9]/)) {
                         let num = '';
-                        while (i < line.length && line[i].match(/[0-9]/)) num += line[i++];
+                        while (i < line.length && line[i].match(/[0-9]/)) {
+                            num += line[i];
+                            i++;
+                        }
                         tokens.push(num);
-                    } else { i++; }
+                    } else {
+                        i++;
+                    }
                 }
             }
             
-            let pdfContent = `LFJC ${selectedClass} - ${shortDate} KEY\n${'─'.repeat(50)}\n\n`;
+            const [year, month, day] = selectedDate.split('-');
+            const shortDate = `${day}/${month}/${year.slice(-2)}`;
+            const filenameDate = `${day}-${month}-${year.slice(-2)}`;
+            
+            let pdfContent = `LFJC ${section} - ${shortDate} KEY\n`;
+            pdfContent += `${'─'.repeat(50)}\n\n`;
+            
             let line = '';
             for (let i = 0; i < tokens.length; i++) {
                 line += `${i+1})${tokens[i]} `;
-                if ((i + 1) % 10 === 0) { pdfContent += line + '\n'; line = ''; }
+                if ((i + 1) % 10 === 0) {
+                    pdfContent += line + '\n';
+                    line = '';
+                }
             }
             if (line) pdfContent += line + '\n';
-            pdfContent += `\n${'─'.repeat(50)}\nTotal Questions: ${tokens.length}`;
+            
+            pdfContent += `\n${'─'.repeat(50)}`;
+            pdfContent += `\nTotal Questions: ${tokens.length}`;
             
             const base64Content = btoa(unescape(encodeURIComponent(content)));
             
             progressFill.style.width = '70%';
+            progressFill.textContent = '70%';
             progressText.textContent = 'Uploading to GitHub...';
-            await uploadToGitHub(repoName, 'answer-key.txt', base64Content);
+            
+            const filePath = `answer-key.txt`;
+            await uploadToGitHub(repoName, filePath, base64Content);
             
             progressFill.style.width = '90%';
-            progressText.textContent = 'Sending to Google Drive...';
+            progressFill.textContent = '90%';
+            progressText.textContent = 'Sending to Google Drive backup...';
+            
+            // SEND TO GOOGLE DRIVE
             try {
                 await fetch(GAS_URL, {
                     method: 'POST',
@@ -987,15 +1081,21 @@
                         date: selectedDate,
                         shortDate: shortDate,
                         filenameDate: filenameDate,
-                        section: selectedClass,
+                        section: section,
                         folderId: GOOGLE_DRIVE_FOLDER_ID
                     })
                 });
-            } catch(e) { console.log('Drive backup optional'); }
+                console.log('✅ Sent to Google Drive');
+            } catch (e) {
+                console.log('Google Drive backup optional:', e);
+            }
             
             progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            
             showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Google Drive backup sent`, true);
-            document.getElementById('notepadContent').value = '';
+            
+            textarea.value = '';
             updateAnswerCount();
             updateUploadButton();
         }
