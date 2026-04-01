@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LFJC Teacher Portal</title>
     <style>
-        /* ALL YOUR EXISTING CSS - SAME AS BEFORE */
         * {
             margin: 0;
             padding: 0;
@@ -45,9 +44,65 @@
             opacity: 0.9;
         }
         
+        .token-section {
+            background: #fef3c7;
+            padding: 15px 25px;
+            border-bottom: 1px solid #fde68a;
+        }
+        
+        .token-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .token-container label {
+            font-weight: 600;
+            color: #92400e;
+            font-size: 14px;
+        }
+        
+        .token-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 15px;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            background: #fffbeb;
+        }
+        
+        .token-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        .token-status {
+            font-size: 12px;
+            color: #92400e;
+        }
+        
+        .token-save-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .token-save-btn:hover {
+            background: #059669;
+        }
+        
         .date-section {
             background: #f0f4f8;
-            padding: 15px 30px;
+            padding: 15px 25px;
             border-bottom: 1px solid #e2e8f0;
         }
         
@@ -83,7 +138,7 @@
         }
         
         .main-content {
-            padding: 30px;
+            padding: 25px;
         }
         
         .form-group {
@@ -411,6 +466,10 @@
             .notepad-textarea {
                 font-size: 16px;
             }
+            .token-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
         
         @media print {
@@ -422,7 +481,7 @@
                 box-shadow: none;
                 max-width: 100%;
             }
-            .header, .date-section, .class-options, .folder-options, 
+            .header, .date-section, .token-section, .class-options, .folder-options, 
             .upload-area, .action-buttons,
             .notepad-header, .notepad-footer, .upload-btn, .file-list,
             .progress-container {
@@ -454,7 +513,16 @@
     <div class="container">
         <div class="header">
             <h1>📚 LFJC Teacher Portal</h1>
-            <p>Upload questions and answer keys</p>
+            <p>Upload questions and answer keys to GitHub</p>
+        </div>
+        
+        <div class="token-section">
+            <div class="token-container">
+                <label>🔑 GitHub Token:</label>
+                <input type="password" id="githubToken" class="token-input" placeholder="Enter your GitHub token (starts with ghp_)">
+                <button id="saveTokenBtn" class="token-save-btn">💾 Save Token</button>
+                <span id="tokenStatus" class="token-status"></span>
+            </div>
         </div>
         
         <div class="date-section">
@@ -557,12 +625,46 @@
         let selectedFiles = [];
         let selectedClass = "1D";
         let selectedFolder = "questions";
+        let githubToken = localStorage.getItem('github_token') || '';
+        
+        // ========== DOM ELEMENTS ==========
+        const tokenInput = document.getElementById('githubToken');
+        const saveTokenBtn = document.getElementById('saveTokenBtn');
+        const tokenStatus = document.getElementById('tokenStatus');
+        
+        // ========== TOKEN MANAGEMENT ==========
+        if (githubToken) {
+            tokenInput.value = githubToken;
+            tokenStatus.textContent = '✓ Token saved';
+            tokenStatus.style.color = '#10b981';
+        }
+        
+        saveTokenBtn.addEventListener('click', () => {
+            const token = tokenInput.value.trim();
+            if (token.startsWith('ghp_')) {
+                localStorage.setItem('github_token', token);
+                githubToken = token;
+                tokenStatus.textContent = '✓ Token saved successfully!';
+                tokenStatus.style.color = '#10b981';
+                setTimeout(() => {
+                    tokenStatus.textContent = '';
+                }, 3000);
+                updateUploadButton();
+            } else {
+                tokenStatus.textContent = '❌ Invalid token. Must start with ghp_';
+                tokenStatus.style.color = '#ef4444';
+                setTimeout(() => {
+                    tokenStatus.textContent = '';
+                }, 3000);
+            }
+        });
         
         // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
             initializeDatePicker();
             updateUI();
+            updateUploadButton();
         });
         
         // ========== DATE FUNCTIONS ==========
@@ -600,26 +702,45 @@
             notepadContainer.insertBefore(printHeader, notepadContainer.firstChild);
         }
         
-        // ========== UPLOAD USING GITHUB API (WITHOUT TOKEN IN HTML) ==========
+        // ========== GITHUB UPLOAD (DIRECT WITH TOKEN) ==========
         async function uploadToGitHub(filePath, base64Content) {
-            // This triggers a GitHub Action that has the token
-            const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`, {
-                method: 'POST',
+            const token = githubToken;
+            if (!token) {
+                throw new Error('No GitHub token. Please save your token first.');
+            }
+            
+            // Check if file exists
+            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Authorization': `token ${token}`,
                     'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            let sha = null;
+            if (checkRes.ok) {
+                const data = await checkRes.json();
+                sha = data.sha;
+            }
+            
+            // Upload file
+            const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    event_type: 'upload',
-                    client_payload: {
-                        path: filePath,
-                        content: base64Content
-                    }
+                    message: `Upload ${filePath}`,
+                    content: base64Content,
+                    sha: sha,
+                    branch: 'main'
                 })
             });
             
-            if (!response.ok) {
-                throw new Error(`GitHub API error: ${response.status}`);
+            if (!uploadRes.ok) {
+                const error = await uploadRes.json();
+                throw new Error(`GitHub error: ${error.message || uploadRes.status}`);
             }
             
             return true;
@@ -805,6 +926,13 @@
         
         function updateUploadButton() {
             const uploadBtn = document.getElementById('uploadBtn');
+            const hasToken = githubToken && githubToken.startsWith('ghp_');
+            
+            if (!hasToken) {
+                uploadBtn.disabled = true;
+                uploadBtn.title = 'Please save your GitHub token first';
+                return;
+            }
             
             if (selectedFolder === 'questions') {
                 uploadBtn.disabled = selectedFiles.length === 0;
@@ -866,6 +994,11 @@
             const progressContainer = document.getElementById('progressContainer');
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
+            
+            if (!githubToken || !githubToken.startsWith('ghp_')) {
+                showAcknowledgement('No Token', 'Please save your GitHub token first.', false);
+                return;
+            }
             
             uploadBtn.disabled = true;
             uploadBtn.textContent = '⏳ Uploading...';
