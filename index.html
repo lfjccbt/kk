@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LFJC Admin Portal | Upload + Lock Manager</title>
+    <title>LFJC Admin Portal | Upload + Lock Manager + Config</title>
     <style>
         * {
             margin: 0;
@@ -19,11 +19,10 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
-        /* Header */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -38,44 +37,6 @@
             margin-bottom: 5px;
         }
         
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        /* Two Column Layout */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-        
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 0;
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 18px 25px;
-            border-bottom: 2px solid #e0e0e0;
-            font-weight: bold;
-            font-size: 18px;
-            color: #333;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card-body {
-            padding: 25px;
-        }
-        
-        /* Token Bar (Full Width) */
         .token-bar {
             background: #fef3c7;
             border-radius: 15px;
@@ -96,11 +57,6 @@
             min-width: 300px;
         }
         
-        .token-input-group label {
-            font-weight: 600;
-            color: #92400e;
-        }
-        
         .token-input {
             flex: 1;
             padding: 10px 15px;
@@ -110,7 +66,7 @@
             background: #fffbeb;
         }
         
-        .token-save-btn {
+        .token-save-btn, .admin-access-btn {
             background: #10b981;
             color: white;
             border: none;
@@ -120,104 +76,96 @@
             font-weight: 600;
         }
         
-        .admin-badge {
+        .admin-access-btn {
             background: #4B0082;
+        }
+        
+        .admin-badge {
+            background: #10b981;
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
         }
         
-        /* Lock Grid */
+        /* 3 column layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1.2fr;
+            gap: 25px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px 20px;
+            border-bottom: 2px solid #e0e0e0;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        /* Lock Grid - FULL COLOR CARDS */
         .lock-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-top: 15px;
         }
         
         .lock-card {
-            background: #f8fafc;
             border-radius: 12px;
-            padding: 12px 15px;
-            border: 2px solid #e2e8f0;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
         
         .lock-card.locked {
-            background: #fef2f2;
-            border-color: #fecaca;
+            background: #dc2626;
+            color: white;
+            box-shadow: 0 2px 8px rgba(220,38,38,0.3);
         }
         
         .lock-card.unlocked {
-            background: #f0fdf4;
-            border-color: #bbf7d0;
-        }
-        
-        .class-name {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        
-        .lock-status-badge {
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 20px;
-        }
-        
-        .lock-status-badge.locked {
-            background: #dc2626;
-            color: white;
-        }
-        
-        .lock-status-badge.unlocked {
             background: #10b981;
             color: white;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
         }
         
-        .lock-toggle-btn {
-            padding: 5px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 11px;
+        .lock-card:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
         }
         
-        .lock-toggle-btn.locked {
-            background: #10b981;
-            color: white;
-        }
-        
-        .lock-toggle-btn.unlocked {
-            background: #dc2626;
-            color: white;
-        }
-        
-        /* Class Selector for Upload */
+        /* Class selector for upload */
         .class-selector {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
         }
         
         .class-option {
-            padding: 10px;
+            padding: 8px;
             background: #f8f9fa;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s;
+            font-size: 13px;
         }
         
         .class-option.active {
@@ -226,30 +174,20 @@
             border-color: #667eea;
         }
         
-        .class-option.locked-class {
-            background: #fee2e2;
-            border-color: #fecaca;
-            color: #991b1b;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        
-        /* Folder Options */
         .folder-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 12px;
+            margin: 15px 0;
         }
         
         .folder-btn {
-            padding: 15px;
+            padding: 12px;
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             cursor: pointer;
             text-align: center;
-            transition: all 0.2s;
         }
         
         .folder-btn.active {
@@ -266,47 +204,28 @@
             color: white;
         }
         
-        /* Upload Area */
         .upload-area {
             border: 2px dashed #d1d5db;
             border-radius: 10px;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             background: #fafafa;
-            margin: 15px 0;
-        }
-        
-        .upload-area:hover {
-            border-color: #667eea;
-            background: #f5f3ff;
-        }
-        
-        .upload-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-            color: #667eea;
+            margin: 10px 0;
         }
         
         .file-list {
-            max-height: 150px;
+            max-height: 120px;
             overflow-y: auto;
-            margin-top: 10px;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 10px;
-            background: white;
+            padding: 8px;
+            font-size: 12px;
         }
         
-        .file-item {
-            padding: 6px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 13px;
-        }
-        
-        /* NOTEPAD - PRESERVING ORIGINAL PATTERN (5 per row auto-enter) */
+        /* NOTEPAD - ORIGINAL PATTERN PRESERVED */
         .notepad-container {
-            margin-top: 20px;
+            margin-top: 15px;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #e0e0e0;
@@ -315,25 +234,19 @@
         .notepad-header {
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             color: white;
-            padding: 12px 15px;
-        }
-        
-        .notepad-header h3 {
-            font-size: 15px;
+            padding: 10px 15px;
         }
         
         .notepad-textarea {
             width: 100%;
-            height: 280px;
-            padding: 20px;
+            height: 220px;
+            padding: 15px;
             border: none;
             font-family: 'Courier New', monospace;
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 16px;
+            line-height: 1.5;
             resize: vertical;
             background: #fafafa;
-            letter-spacing: 1px;
-            caret-color: #667eea;
         }
         
         .notepad-textarea:focus {
@@ -343,23 +256,20 @@
         
         .notepad-footer {
             background: #fffef0;
-            padding: 10px 15px;
+            padding: 8px 15px;
             font-size: 12px;
-            color: #666;
             display: flex;
             justify-content: space-between;
-            border-top: 1px solid #eaeaea;
         }
         
-        /* Progress Bar */
         .progress-container {
-            margin: 20px 0;
+            margin: 15px 0;
             display: none;
         }
         
         .progress-bar {
             width: 100%;
-            height: 30px;
+            height: 25px;
             background: #e0e0e0;
             border-radius: 15px;
             overflow: hidden;
@@ -369,26 +279,23 @@
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             width: 0%;
-            transition: width 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 11px;
         }
         
         .upload-btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 15px;
         }
         
         .upload-btn:disabled {
@@ -403,56 +310,40 @@
             margin-bottom: 15px;
         }
         
-        .date-picker label {
-            font-weight: 600;
+        /* Config Editor Styles */
+        .subject-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
         }
         
-        .date-picker input {
-            padding: 8px 12px;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px;
+        .subject-input-row select, .subject-input-row input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .remove-subject-btn {
+            background: #dc3545;
+            color: white;
+            padding: 4px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
         
         .status-message {
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-top: 15px;
+            margin-top: 10px;
             display: none;
-            font-size: 13px;
+            font-size: 12px;
         }
         
-        .status-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
+        .status-success { background: #d1fae5; color: #065f46; }
+        .status-error { background: #fee2e2; color: #991b1b; }
         
-        .status-error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-        }
-        
-        @media (max-width: 1000px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            .class-selector, .lock-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .class-selector, .lock-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        /* Modal */
         .admin-modal {
             position: fixed;
             top: 0;
@@ -474,20 +365,12 @@
             min-width: 300px;
         }
         
-        .admin-modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-        }
-        
         .acknowledgement-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.8);
             display: none;
             justify-content: center;
@@ -498,20 +381,23 @@
         .acknowledgement-box {
             background: white;
             border-radius: 15px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
-            max-width: 450px;
+            max-width: 400px;
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>🔐 LFJC Admin Portal | Upload + Lock Manager</h1>
-        <p>Manage class locks | Upload questions & answer keys | Full control</p>
+        <h1>🔐 LFJC Admin Portal | Lock Manager + Upload + Config</h1>
+        <p>Red = Locked (students blocked) | Green = Unlocked | Config editor included</p>
     </div>
     
-    <!-- Token Bar -->
     <div class="token-bar">
         <div class="token-input-group">
             <label>🔑 GitHub Token:</label>
@@ -519,122 +405,114 @@
             <button id="saveTokenBtn" class="token-save-btn">Save Token</button>
         </div>
         <div>
-            <button id="adminLockBtn" class="admin-badge" style="background:#667eea; cursor:pointer;">🔓 Admin Access</button>
-            <span id="adminModeBadge" class="admin-badge" style="display:none; background:#10b981;">👑 Admin Mode</span>
+            <button id="adminAccessBtn" class="admin-access-btn">🔓 Admin Access</button>
+            <span id="adminBadge" class="admin-badge" style="display:none;">👑 Admin Mode</span>
         </div>
         <span id="tokenStatus" style="font-size:12px;"></span>
     </div>
     
     <div class="dashboard">
-        <!-- LEFT COLUMN: Lock Manager -->
+        <!-- COLUMN 1: Class Lock Manager (FULL COLOR CARDS) -->
         <div class="card">
-            <div class="card-header">
-                🔒 Class Lock Manager
-                <span id="lockStats" style="font-size:12px; font-weight:normal;"></span>
-            </div>
+            <div class="card-header">🔒 Class Lock Manager <span id="lockStats" style="float:right;"></span></div>
             <div class="card-body">
-                <div id="lockGridContainer" class="lock-grid">
-                    <div class="loading">Loading locks...</div>
-                </div>
-                <div class="status-message" id="lockStatusMsg"></div>
+                <div id="lockGridContainer" class="lock-grid">Loading...</div>
+                <div id="lockStatusMsg" class="status-message"></div>
             </div>
         </div>
         
-        <!-- RIGHT COLUMN: Upload Manager -->
+        <!-- COLUMN 2: Upload Manager -->
         <div class="card">
-            <div class="card-header">
-                📤 Upload Content
-                <span id="selectedClassDisplay" style="font-size:12px; font-weight:normal;"></span>
-            </div>
+            <div class="card-header">📤 Upload Content</div>
             <div class="card-body">
-                <!-- Date Picker -->
                 <div class="date-picker">
                     <label>📅 Date:</label>
                     <input type="date" id="selectedDate">
                 </div>
-                
-                <!-- Class Selector for Upload -->
                 <div class="class-selector" id="uploadClassSelector"></div>
-                
-                <!-- Folder Type -->
                 <div class="folder-options">
-                    <div class="folder-btn questions active" data-folder="questions">
-                        <h4>📝 Questions</h4>
-                        <p>Upload images to /questions/</p>
-                    </div>
-                    <div class="folder-btn answers" data-folder="answers">
-                        <h4>✅ Answers</h4>
-                        <p>Type answer key (5 per row auto-enter)</p>
-                    </div>
+                    <div class="folder-btn questions active" data-folder="questions"><h4>📝 Questions</h4><p>Upload images</p></div>
+                    <div class="folder-btn answers" data-folder="answers"><h4>✅ Answers</h4><p>Type answer key</p></div>
                 </div>
-                
-                <!-- Questions Upload Section -->
                 <div id="questionUploadSection">
                     <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                        <div class="upload-icon">📂</div>
-                        <h3>Click to Browse Files</h3>
-                        <p>or drag and drop images here</p>
+                        <div class="upload-icon" style="font-size:30px;">📂</div>
+                        <p>Click or drag images</p>
                     </div>
                     <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
                     <div class="file-list" id="fileList"></div>
                 </div>
-                
-                <!-- Notepad Section (Answer Key) - PRESERVING ORIGINAL PATTERN -->
                 <div id="notepadContainer" class="notepad-container" style="display:none;">
-                    <div class="notepad-header">
-                        <h3>Answer Key - Class <span id="notepadClass">1D</span></h3>
-                    </div>
+                    <div class="notepad-header"><h3>Answer Key - Class <span id="notepadClass">1D</span></h3></div>
                     <textarea id="notepadContent" class="notepad-textarea" placeholder="Type letters (A-D) or numbers - 5 per row auto-enter"></textarea>
-                    <div class="notepad-footer">
-                        <div>Total answers: <span id="answerCount">0</span></div>
-                        <div>5 per row (auto-enter)</div>
-                    </div>
+                    <div class="notepad-footer"><div>Total answers: <span id="answerCount">0</span></div><div>5 per row (auto-enter)</div></div>
                 </div>
-                
-                <!-- Progress -->
                 <div class="progress-container" id="progressContainer">
                     <div class="progress-bar"><div class="progress-fill" id="progressFill">0%</div></div>
-                    <p id="progressText" style="text-align:center; font-size:12px; margin-top:8px;"></p>
+                    <p id="progressText" style="font-size:11px; text-align:center; margin-top:5px;"></p>
                 </div>
-                
-                <!-- Upload Button -->
                 <button class="upload-btn" id="uploadBtn" disabled>📤 Upload Files</button>
                 <div id="uploadStatusMsg" class="status-message"></div>
+            </div>
+        </div>
+        
+        <!-- COLUMN 3: Exam Configuration Editor (FULL ORIGINAL) -->
+        <div class="card">
+            <div class="card-header">⚙️ Exam Configuration Editor <span style="font-size:11px;">(Admin only)</span></div>
+            <div class="card-body">
+                <div id="configClassSelector" style="margin-bottom:15px;">
+                    <label>📚 Select Class:</label>
+                    <select id="configClass" style="width:100%; padding:8px; margin-top:5px;">
+                        <option value="1D">1D</option><option value="1M">1M</option><option value="1N">1N</option>
+                        <option value="1E">1E</option><option value="2D">2D</option><option value="2M">2M</option>
+                        <option value="2N">2N</option><option value="2E">2E</option>
+                    </select>
+                    <button id="loadConfigBtn" style="background:#17a2b8; color:white; margin-top:8px; padding:6px 12px; border:none; border-radius:6px;">Load Current Config</button>
+                </div>
+                <div id="configForm" style="display:none;">
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:15px;">
+                        <div><label>⏱️ Duration (min):</label><input type="number" id="configDuration" style="width:100%; padding:6px;"></div>
+                        <div><label>✅ Correct Mark:</label><input type="number" id="configCorrectMark" step="0.5" style="width:100%; padding:6px;"></div>
+                        <div><label>❌ Wrong Mark:</label><input type="number" id="configWrongMark" step="0.5" style="width:100%; padding:6px;"></div>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label>📚 Subjects & Questions:</label>
+                        <div id="subjectsConfigList"></div>
+                        <button id="addSubjectConfigBtn" style="background:#28a745; color:white; margin-top:5px; padding:5px 12px; border:none; border-radius:6px;">+ Add Subject</button>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label>📤 Active Subjects for Forms:</label>
+                        <div id="activeSubjectsConfigList"></div>
+                    </div>
+                    <button id="saveConfigBtn" style="background:#4B0082; color:white; padding:10px; width:100%; border:none; border-radius:8px;">💾 Save Configuration</button>
+                </div>
+                <div id="configMessage" class="status-message"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Admin Password Modal -->
+<!-- Admin Modal -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-modal-content">
         <h3>🔒 Admin Access Required</h3>
         <input type="password" id="adminPassword" placeholder="Enter admin password">
-        <div>
-            <button id="adminConfirmBtn" style="background:#4B0082; color:white; padding:8px 20px; margin:5px;">Verify</button>
-            <button id="adminCancelBtn" style="background:#6c757d; color:white; padding:8px 20px;">Cancel</button>
-        </div>
+        <button id="adminConfirmBtn" style="background:#4B0082; color:white; padding:8px 20px; margin:5px;">Verify</button>
+        <button id="adminCancelBtn" style="background:#6c757d; color:white;">Cancel</button>
     </div>
 </div>
 
-<!-- Acknowledgement -->
 <div id="ackOverlay" class="acknowledgement-overlay">
-    <div class="acknowledgement-box">
-        <div style="font-size:60px;" id="ackIcon">✅</div>
-        <h2 id="ackTitle">Success</h2>
-        <p id="ackMessage"></p>
-        <button onclick="closeAck()" style="background:#667eea; color:white; border:none; padding:10px 25px; border-radius:8px; margin-top:15px;">OK</button>
-    </div>
+    <div class="acknowledgement-box"><div style="font-size:50px;" id="ackIcon">✅</div><h3 id="ackTitle">Success</h3><p id="ackMessage"></p><button onclick="closeAck()" style="background:#667eea; color:white; border:none; padding:8px 20px; border-radius:8px;">OK</button></div>
 </div>
 
 <script>
     // ==================== CONFIGURATION ====================
     const REPO_OWNER = 'lfjccbt';
     const ADMIN_PASSWORD = 'admin2025';
-    const CLASSES = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
+    const CLASSES = ['1D','1M','1N','1E','2D','2M','2N','2E'];
     const CLASS_REPO_MAP = { "1D":"1D","1M":"1M","1N":"1N","1E":"1E","2D":"2D","2M":"2M","2N":"2N","2E":"2E" };
     
-    // State
     let isAdmin = false;
     let githubToken = localStorage.getItem('github_token') || '';
     let classLocks = {};
@@ -645,9 +523,8 @@
     // DOM Elements
     const tokenInput = document.getElementById('githubToken');
     const saveTokenBtn = document.getElementById('saveTokenBtn');
-    const tokenStatus = document.getElementById('tokenStatus');
-    const adminLockBtn = document.getElementById('adminLockBtn');
-    const adminModeBadge = document.getElementById('adminModeBadge');
+    const adminAccessBtn = document.getElementById('adminAccessBtn');
+    const adminBadge = document.getElementById('adminBadge');
     const adminModal = document.getElementById('adminModal');
     const lockGridContainer = document.getElementById('lockGridContainer');
     const uploadClassSelector = document.getElementById('uploadClassSelector');
@@ -661,14 +538,8 @@
     const uploadBtn = document.getElementById('uploadBtn');
     const selectedDateInput = document.getElementById('selectedDate');
     
-    // Load saved token
-    if (githubToken) {
-        tokenInput.value = githubToken;
-        tokenStatus.innerText = '✓ Token loaded';
-        tokenStatus.style.color = '#10b981';
-    }
+    if (githubToken) { tokenInput.value = githubToken; tokenStatus.innerText = '✓ Token loaded'; tokenStatus.style.color = '#10b981'; }
     
-    // Save token
     saveTokenBtn.onclick = () => {
         const token = tokenInput.value.trim();
         if (token.startsWith('ghp_') && token.length > 20) {
@@ -676,72 +547,50 @@
             githubToken = token;
             tokenStatus.innerText = '✓ Token saved!';
             tokenStatus.style.color = '#10b981';
-            showStatus('Token saved! Click Admin Access to manage locks.', 'success', 'lockStatusMsg');
+            showStatus('Token saved!', 'success', 'lockStatusMsg');
             loadLocks();
-        } else {
-            tokenStatus.innerText = '❌ Invalid token';
-            tokenStatus.style.color = '#ef4444';
-        }
+        } else { tokenStatus.innerText = '❌ Invalid token'; tokenStatus.style.color = '#ef4444'; }
     };
     
-    // Admin access
-    adminLockBtn.onclick = () => adminModal.style.display = 'flex';
+    adminAccessBtn.onclick = () => adminModal.style.display = 'flex';
     document.getElementById('adminConfirmBtn').onclick = () => {
-        const pwd = document.getElementById('adminPassword').value;
-        if (pwd === ADMIN_PASSWORD) {
+        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
             isAdmin = true;
-            adminModeBadge.style.display = 'inline-flex';
+            adminBadge.style.display = 'inline-block';
             adminModal.style.display = 'none';
-            showStatus('Admin access granted! You can now lock/unlock classes.', 'success', 'lockStatusMsg');
+            showStatus('Admin mode active! You can now modify locks & config.', 'success', 'lockStatusMsg');
             loadLocks();
-        } else {
-            alert('Wrong password!');
-            document.getElementById('adminPassword').value = '';
-        }
+            document.getElementById('configForm').style.display = 'block';
+        } else { alert('Wrong password!'); document.getElementById('adminPassword').value = ''; }
     };
     document.getElementById('adminCancelBtn').onclick = () => adminModal.style.display = 'none';
     
-    // ==================== LOCK MANAGER ====================
+    // ==================== LOCK MANAGER (FULL COLOR CARDS) ====================
     async function loadLocks() {
-        if (!githubToken) {
-            lockGridContainer.innerHTML = '<div class="loading">⚠️ Enter GitHub token first</div>';
-            return;
-        }
-        lockGridContainer.innerHTML = '<div class="loading">🔄 Loading locks...</div>';
+        if (!githubToken) { lockGridContainer.innerHTML = '<div class="lock-card locked" style="grid-column:span 2;">⚠️ Enter token first</div>'; return; }
+        lockGridContainer.innerHTML = '<div style="grid-column:span 2; text-align:center;">Loading...</div>';
         try {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`;
-            const res = await fetch(url, { headers: { 'Authorization': `token ${githubToken}` } });
-            if (res.ok) {
-                const data = await res.json();
-                classLocks = JSON.parse(atob(data.content));
-            } else if (res.status === 404) {
-                CLASSES.forEach(c => classLocks[c] = false);
-                await saveLocksToGitHub(true);
-            } else throw new Error('Failed to load');
+            const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`, { headers: { 'Authorization': `token ${githubToken}` } });
+            if (res.ok) classLocks = JSON.parse(atob((await res.json()).content));
+            else if (res.status === 404) { CLASSES.forEach(c => classLocks[c] = false); await saveLocksToGitHub(true); }
+            else throw new Error();
             renderLockGrid();
             updateUploadClassSelector();
-        } catch (err) {
-            lockGridContainer.innerHTML = `<div class="loading">❌ Error: ${err.message}</div>`;
-            CLASSES.forEach(c => classLocks[c] = false);
-            renderLockGrid();
-        }
+        } catch(e) { CLASSES.forEach(c => classLocks[c] = false); renderLockGrid(); }
     }
     
-    async function saveLocksToGitHub(isNew = false) {
+    async function saveLocksToGitHub(isNew=false) {
         if (!githubToken) return false;
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(classLocks, null, 2))));
         try {
             let sha = null;
-            const checkUrl = `https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`;
-            const checkRes = await fetch(checkUrl, { headers: { 'Authorization': `token ${githubToken}` } });
-            if (checkRes.ok) sha = (await checkRes.json()).sha;
-            const saveRes = await fetch(checkUrl, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+            const check = await fetch(`https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`, { headers: { 'Authorization': `token ${githubToken}` } });
+            if (check.ok) sha = (await check.json()).sha;
+            const save = await fetch(`https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`, {
+                method: 'PUT', headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: 'Update locks', content, sha, branch: 'main' })
             });
-            if (saveRes.ok) return true;
-            throw new Error('Save failed');
+            return save.ok;
         } catch(e) { return false; }
     }
     
@@ -751,27 +600,21 @@
         if (await saveLocksToGitHub()) {
             renderLockGrid();
             updateUploadClassSelector();
-            showStatus(`${cls} is now ${classLocks[cls] ? '🔒 LOCKED' : '🔓 UNLOCKED'}`, 'success', 'lockStatusMsg');
-            if (selectedClass === cls) updateUploadButtonState();
+            showStatus(`${cls} is now ${classLocks[cls] ? 'LOCKED' : 'UNLOCKED'}`, 'success', 'lockStatusMsg');
         } else {
             classLocks[cls] = !classLocks[cls];
             renderLockGrid();
-            showStatus('Failed to save!', 'error', 'lockStatusMsg');
+            showStatus('Save failed!', 'error', 'lockStatusMsg');
         }
     }
     
     function renderLockGrid() {
-        const lockedCount = Object.values(classLocks).filter(v => v === true).length;
+        const lockedCount = Object.values(classLocks).filter(v=>v===true).length;
         document.getElementById('lockStats').innerHTML = `${lockedCount}/${CLASSES.length} locked`;
         let html = '';
         for (const cls of CLASSES) {
             const locked = classLocks[cls] || false;
-            html += `
-                <div class="lock-card ${locked ? 'locked' : 'unlocked'}">
-                    <div><span class="class-name">📚 ${cls}</span><br><span class="lock-status-badge ${locked ? 'locked' : 'unlocked'}">${locked ? 'LOCKED' : 'UNLOCKED'}</span></div>
-                    ${isAdmin ? `<button class="lock-toggle-btn ${locked ? 'locked' : 'unlocked'}" onclick="toggleLock('${cls}')">${locked ? '🔓 Unlock' : '🔒 Lock'}</button>` : ''}
-                </div>
-            `;
+            html += `<div class="lock-card ${locked ? 'locked' : 'unlocked'}" onclick="toggleLock('${cls}')">📚 ${cls}</div>`;
         }
         lockGridContainer.innerHTML = html;
     }
@@ -781,16 +624,12 @@
         let html = '';
         for (const cls of CLASSES) {
             const locked = classLocks[cls] || false;
-            html += `<div class="class-option ${selectedClass === cls ? 'active' : ''} ${locked ? 'locked-class' : ''}" data-class="${cls}">${cls} ${locked ? '🔒' : '🔓'}</div>`;
+            html += `<div class="class-option ${selectedClass === cls ? 'active' : ''}" data-class="${cls}">${cls} ${locked ? '🔒' : '🔓'}</div>`;
         }
         uploadClassSelector.innerHTML = html;
         document.querySelectorAll('.class-option').forEach(el => {
             el.onclick = () => {
                 const cls = el.dataset.class;
-                if (classLocks[cls]) {
-                    showStatus(`Class ${cls} is LOCKED. Cannot select for upload.`, 'error', 'uploadStatusMsg');
-                    return;
-                }
                 document.querySelectorAll('.class-option').forEach(c => c.classList.remove('active'));
                 el.classList.add('active');
                 selectedClass = cls;
@@ -800,7 +639,6 @@
         });
     }
     
-    // Folder toggle
     document.querySelectorAll('.folder-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
@@ -818,46 +656,23 @@
         };
     });
     
-    // NOTEPAD PATTERN - PRESERVED EXACTLY (5 per row auto-enter)
+    // Notepad pattern (5 per row auto-enter)
     notepadContent.addEventListener('keydown', function(e) {
         if ([8,9,13,16,17,18,20,27,37,38,39,40,46].includes(e.keyCode)) return true;
         if (!/^[a-dA-D0-9]$/.test(e.key) && e.key.length === 1) { e.preventDefault(); return false; }
     });
-    
-    notepadContent.addEventListener('input', function(e) {
-        const cursorPos = notepadContent.selectionStart;
-        let value = notepadContent.value.toUpperCase().replace(/[^ABCD0-9\n]/g, '');
-        const textBeforeCursor = value.substring(0, cursorPos);
-        const currentLine = textBeforeCursor.split('\n').pop() || '';
-        const typedChar = e.data ? e.data.toUpperCase() : '';
-        if (/^[ABCD0-9]$/.test(typedChar) && currentLine.replace(/[^ABCD0-9]/g, '').length === 5) {
-            const before = value.substring(0, cursorPos);
-            const after = value.substring(cursorPos);
-            value = before + '\n' + after;
-            notepadContent.value = value;
-            setTimeout(() => notepadContent.setSelectionRange(cursorPos + 1, cursorPos + 1), 0);
-            updateAnswerCount();
-            updateUploadButtonState();
-            return;
-        }
-        const lines = value.split('\n');
+    notepadContent.addEventListener('input', function() {
+        let val = notepadContent.value.toUpperCase().replace(/[^ABCD0-9\n]/g, '');
+        const lines = val.split('\n');
         let formatted = [];
         for (let line of lines) {
             if (!line) { formatted.push(''); continue; }
             if (/^[ABCD0-9]+$/.test(line)) {
-                for (let i = 0; i < line.length; i += 5) {
-                    const chunk = line.substring(i, i+5);
-                    if (chunk) formatted.push(chunk);
-                }
+                for (let i = 0; i < line.length; i += 5) formatted.push(line.substring(i, i+5));
             } else formatted.push(line);
         }
         const newVal = formatted.join('\n');
-        if (newVal !== value) {
-            notepadContent.value = newVal;
-            let newPos = cursorPos;
-            if (newVal.length !== value.length) newPos = Math.min(cursorPos, newVal.length);
-            setTimeout(() => notepadContent.setSelectionRange(newPos, newPos), 0);
-        }
+        if (newVal !== val) notepadContent.value = newVal;
         updateAnswerCount();
         updateUploadButtonState();
     });
@@ -869,26 +684,19 @@
         answerCountSpan.innerText = letters.length + numbers.length;
     }
     
-    // File handling
     fileInput.onchange = (e) => {
         selectedFiles = Array.from(e.target.files);
-        fileListDiv.innerHTML = selectedFiles.map(f => `<div class="file-item">📄 ${f.name}</div>`).join('');
+        fileListDiv.innerHTML = selectedFiles.map(f => `<div>📄 ${f.name}</div>`).join('');
         updateUploadButtonState();
     };
     
     function updateUploadButtonState() {
         const hasToken = githubToken && githubToken.length > 10;
-        const isClassLocked = classLocks[selectedClass] === true;
-        if (!hasToken) uploadBtn.disabled = true;
-        else if (isClassLocked) uploadBtn.disabled = true;
-        else if (selectedFolder === 'questions') uploadBtn.disabled = selectedFiles.length === 0;
-        else uploadBtn.disabled = notepadContent.value.trim().length === 0;
+        uploadBtn.disabled = !hasToken || (selectedFolder === 'questions' ? selectedFiles.length === 0 : notepadContent.value.trim().length === 0);
     }
     
-    // Upload logic
     async function startUpload() {
         if (!githubToken) { showStatus('No token!', 'error', 'uploadStatusMsg'); return; }
-        if (classLocks[selectedClass]) { showStatus(`Class ${selectedClass} is LOCKED! Cannot upload.`, 'error', 'uploadStatusMsg'); return; }
         const classRepo = CLASS_REPO_MAP[selectedClass];
         const progressDiv = document.getElementById('progressContainer');
         const progressFill = document.getElementById('progressFill');
@@ -897,53 +705,36 @@
         progressDiv.style.display = 'block';
         try {
             if (selectedFolder === 'questions') {
-                if (selectedFiles.length === 0) throw new Error('No files');
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    const percent = Math.round((i/selectedFiles.length)*100);
-                    progressFill.style.width = `${percent}%`;
-                    progressFill.textContent = `${percent}%`;
-                    progressText.textContent = `Uploading ${file.name}...`;
-                    const base64 = await fileToBase64(file);
-                    await uploadToGitHub(classRepo, `questions/${file.name}`, base64);
+                for (let i=0; i<selectedFiles.length; i++) {
+                    const f = selectedFiles[i];
+                    progressFill.style.width = `${Math.round((i/selectedFiles.length)*100)}%`;
+                    progressText.textContent = `Uploading ${f.name}...`;
+                    const base64 = await fileToBase64(f);
+                    await uploadToGitHub(classRepo, `questions/${f.name}`, base64);
                 }
-                showAck('Upload Successful!', `✅ ${selectedFiles.length} questions uploaded to ${classRepo}/questions/`, true);
-                selectedFiles = [];
-                fileInput.value = '';
-                fileListDiv.innerHTML = '';
+                showAck('Upload Success', `${selectedFiles.length} questions uploaded`, true);
+                selectedFiles = []; fileInput.value = ''; fileListDiv.innerHTML = '';
             } else {
-                let content = notepadContent.value.trim();
-                if (!content) throw new Error('Empty answer key');
-                progressFill.style.width = '30%';
-                progressText.textContent = 'Processing answer key...';
+                const content = notepadContent.value.trim();
+                if (!content) throw new Error('Empty key');
                 const base64 = btoa(unescape(encodeURIComponent(content)));
                 await uploadToGitHub(classRepo, 'answer-key.txt', base64);
-                progressFill.style.width = '100%';
-                showAck('Answer Key Uploaded!', `✅ ${selectedClass} answer key saved`, true);
-                notepadContent.value = '';
-                updateAnswerCount();
+                showAck('Answer Key Uploaded', `${selectedClass} answer key saved`, true);
+                notepadContent.value = ''; updateAnswerCount();
             }
-        } catch(err) {
-            showAck('Upload Failed', err.message, false);
-        } finally {
-            progressDiv.style.display = 'none';
-            uploadBtn.disabled = false;
-            updateUploadButtonState();
-        }
+        } catch(err) { showAck('Upload Failed', err.message, false); }
+        finally { progressDiv.style.display = 'none'; uploadBtn.disabled = false; updateUploadButtonState(); }
     }
     
-    async function uploadToGitHub(repo, path, base64Content) {
-        const checkUrl = `https://api.github.com/repos/${REPO_OWNER}/${repo}/contents/${path}`;
+    async function uploadToGitHub(repo, path, base64) {
         let sha = null;
-        const checkRes = await fetch(checkUrl, { headers: { 'Authorization': `token ${githubToken}` } });
-        if (checkRes.ok) sha = (await checkRes.json()).sha;
-        const res = await fetch(checkUrl, {
-            method: 'PUT',
-            headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: `Upload ${path}`, content: base64Content, sha, branch: 'main' })
+        const check = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repo}/contents/${path}`, { headers: { 'Authorization': `token ${githubToken}` } });
+        if (check.ok) sha = (await check.json()).sha;
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repo}/contents/${path}`, {
+            method: 'PUT', headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: `Upload ${path}`, content: base64, sha, branch: 'main' })
         });
         if (!res.ok) throw new Error('Upload failed');
-        return true;
     }
     
     function fileToBase64(file) {
@@ -956,33 +747,98 @@
     }
     
     uploadBtn.onclick = startUpload;
+    selectedDateInput.value = new Date().toISOString().split('T')[0];
     
-    // Date picker init
-    const today = new Date();
-    selectedDateInput.value = today.toISOString().split('T')[0];
-    
-    // Helper functions
-    function showStatus(msg, type, elementId) {
-        const div = document.getElementById(elementId);
-        div.textContent = msg;
-        div.className = `status-message status-${type}`;
-        div.style.display = 'block';
-        setTimeout(() => div.style.display = 'none', 4000);
+    // ==================== CONFIG EDITOR (FULL ORIGINAL) ====================
+    let currentConfig = null;
+    async function loadConfig() {
+        if (!isAdmin) { showStatus('Admin access required for config!', 'error', 'configMessage'); return; }
+        const cls = document.getElementById('configClass').value;
+        const token = githubToken;
+        if (!token) { showStatus('No token', 'error', 'configMessage'); return; }
+        try {
+            const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${cls}/main/config.json?t=${Date.now()}`);
+            if (res.ok) currentConfig = await res.json();
+            else currentConfig = { duration: 180, correctMark: 1, wrongMark: 0, activeForForms: [], subjects: [] };
+            displayConfig();
+            showStatus(`Config loaded for ${cls}`, 'success', 'configMessage');
+        } catch(e) { showStatus('Error loading config', 'error', 'configMessage'); }
     }
     
-    function showAck(title, msg, success) {
-        document.getElementById('ackIcon').innerText = success ? '✅' : '❌';
-        document.getElementById('ackTitle').innerText = title;
-        document.getElementById('ackMessage').innerText = msg;
-        document.getElementById('ackOverlay').style.display = 'flex';
+    function displayConfig() {
+        document.getElementById('configDuration').value = currentConfig.duration;
+        document.getElementById('configCorrectMark').value = currentConfig.correctMark;
+        document.getElementById('configWrongMark').value = currentConfig.wrongMark;
+        const subjectsDiv = document.getElementById('subjectsConfigList');
+        subjectsDiv.innerHTML = '';
+        const subjectOptions = ['MATHS','PHYSICS','CHEMISTRY','BOTANY','ZOOLOGY','MATHS_A','MATHS_B','BZ'];
+        if (!currentConfig.subjects.length) currentConfig.subjects = [{ name:"MATHS", questions:80, numerical:0 },{ name:"PHYSICS", questions:40, numerical:0 },{ name:"CHEMISTRY", questions:40, numerical:0 }];
+        currentConfig.subjects.forEach((sub, idx) => {
+            const div = document.createElement('div'); div.className = 'subject-input-row';
+            div.innerHTML = `<select class="subj-name" data-idx="${idx}">${subjectOptions.map(o=>`<option ${sub.name===o?'selected':''}>${o}</option>`).join('')}</select>
+                <input type="number" value="${sub.questions}" class="subj-q" data-idx="${idx}" placeholder="Q">
+                <input type="number" value="${sub.numerical}" class="subj-num" data-idx="${idx}" placeholder="Num">
+                <button class="remove-subject-btn" data-idx="${idx}">✖</button>`;
+            subjectsDiv.appendChild(div);
+        });
+        document.querySelectorAll('.subj-name').forEach(s=>s.onchange=function(){currentConfig.subjects[this.dataset.idx].name=this.value; updateActiveCheckboxes();});
+        document.querySelectorAll('.subj-q').forEach(i=>i.onchange=function(){currentConfig.subjects[this.dataset.idx].questions=parseInt(this.value)||0;});
+        document.querySelectorAll('.subj-num').forEach(i=>i.onchange=function(){currentConfig.subjects[this.dataset.idx].numerical=parseInt(this.value)||0;});
+        document.querySelectorAll('.remove-subject-btn').forEach(b=>b.onclick=function(){currentConfig.subjects.splice(parseInt(this.dataset.idx),1); displayConfig();});
+        updateActiveCheckboxes();
     }
-    window.closeAck = () => document.getElementById('ackOverlay').style.display = 'none';
+    
+    function updateActiveCheckboxes() {
+        if (!currentConfig.activeForForms) currentConfig.activeForForms = [];
+        const container = document.getElementById('activeSubjectsConfigList');
+        container.innerHTML = '<div style="display:flex; flex-wrap:wrap; gap:8px;">';
+        currentConfig.subjects.forEach(s => {
+            const checked = currentConfig.activeForForms.includes(s.name);
+            container.innerHTML += `<label><input type="checkbox" class="active-subj" data-subj="${s.name}" ${checked?'checked':''}> ${s.name}</label>`;
+        });
+        container.innerHTML += '</div>';
+        document.querySelectorAll('.active-subj').forEach(cb => cb.onchange = function() {
+            const subj = this.dataset.subj;
+            if (this.checked) { if(!currentConfig.activeForForms.includes(subj)) currentConfig.activeForForms.push(subj); }
+            else currentConfig.activeForForms = currentConfig.activeForForms.filter(s=>s!==subj);
+        });
+    }
+    
+    async function saveConfig() {
+        if (!isAdmin) { showStatus('Admin required', 'error', 'configMessage'); return; }
+        const cls = document.getElementById('configClass').value;
+        const configData = {
+            duration: parseInt(document.getElementById('configDuration').value)||180,
+            correctMark: parseFloat(document.getElementById('configCorrectMark').value)||1,
+            wrongMark: parseFloat(document.getElementById('configWrongMark').value)||0,
+            activeForForms: currentConfig.activeForForms||[],
+            subjects: currentConfig.subjects
+        };
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData,null,2))));
+        try {
+            let sha = null;
+            const check = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${cls}/contents/config.json`, { headers: { 'Authorization': `token ${githubToken}` } });
+            if (check.ok) sha = (await check.json()).sha;
+            const save = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${cls}/contents/config.json`, {
+                method: 'PUT', headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Update config for ${cls}`, content, sha, branch: 'main' })
+            });
+            if (save.ok) showStatus(`✅ Config saved to ${cls}`, 'success', 'configMessage');
+            else throw new Error();
+        } catch(e) { showStatus('Save failed', 'error', 'configMessage'); }
+    }
+    
+    document.getElementById('loadConfigBtn').onclick = loadConfig;
+    document.getElementById('saveConfigBtn').onclick = saveConfig;
+    document.getElementById('addSubjectConfigBtn').onclick = () => { currentConfig.subjects.push({ name:"NEW_SUBJECT", questions:40, numerical:0 }); displayConfig(); };
+    
+    function showStatus(msg, type, elId) { const d=document.getElementById(elId); d.textContent=msg; d.className=`status-message status-${type}`; d.style.display='block'; setTimeout(()=>d.style.display='none',4000); }
+    function showAck(title, msg, ok) { document.getElementById('ackIcon').innerText=ok?'✅':'❌'; document.getElementById('ackTitle').innerText=title; document.getElementById('ackMessage').innerText=msg; document.getElementById('ackOverlay').style.display='flex'; }
+    window.closeAck = () => document.getElementById('ackOverlay').style.display='none';
     window.toggleLock = toggleLock;
     
-    // Initial load
     if (githubToken) loadLocks();
     updateUploadClassSelector();
-    updateUploadButtonState();
 </script>
 </body>
 </html>
