@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LFJC Admin Portal | Upload + Lock Manager + Config</title>
+    <title>LFJC Teacher Portal</title>
     <style>
         * {
             margin: 0;
@@ -19,8 +19,11 @@
         }
         
         .container {
-            max-width: 1600px;
+            max-width: 900px;
             margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
         
         .header {
@@ -29,146 +32,148 @@
             padding: 25px;
             text-align: center;
             border-radius: 10px 10px 0 0;
-            margin-bottom: 25px;
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 5px;
         }
         
-        .token-bar {
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .token-section {
             background: #fef3c7;
-            border-radius: 15px;
             padding: 15px 25px;
-            margin-bottom: 25px;
+            border-bottom: 1px solid #fde68a;
+        }
+        
+        .token-container {
             display: flex;
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
-            justify-content: space-between;
         }
         
-        .token-input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 2;
-            min-width: 300px;
+        .token-container label {
+            font-weight: 600;
+            color: #92400e;
+            font-size: 14px;
         }
         
         .token-input {
             flex: 1;
+            min-width: 250px;
             padding: 10px 15px;
             border: 1px solid #fcd34d;
             border-radius: 8px;
+            font-size: 14px;
             font-family: monospace;
             background: #fffbeb;
         }
         
-        .token-save-btn, .admin-access-btn {
+        .token-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        .token-status {
+            font-size: 12px;
+            color: #92400e;
+        }
+        
+        .token-save-btn {
             background: #10b981;
             color: white;
             border: none;
             padding: 8px 20px;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 13px;
             font-weight: 600;
         }
         
-        .admin-access-btn {
-            background: #4B0082;
+        .token-save-btn:hover {
+            background: #059669;
         }
         
-        .admin-badge {
-            background: #10b981;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
+        .date-section {
+            background: #f0f4f8;
+            padding: 15px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .date-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .date-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-picker label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .date-picker input {
+            padding: 8px 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .date-note {
             font-size: 12px;
+            color: #718096;
+            margin-top: 8px;
         }
         
-        /* 3 column layout */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr 1.2fr;
-            gap: 25px;
+        .main-content {
+            padding: 25px;
         }
         
-        .card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
+        .form-group {
+            margin-bottom: 25px;
         }
         
-        .card-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 15px 20px;
-            border-bottom: 2px solid #e0e0e0;
-            font-weight: bold;
-            font-size: 16px;
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
             color: #333;
         }
         
-        .card-body {
-            padding: 20px;
-        }
-        
-        /* Lock Grid - FULL COLOR CARDS */
-        .lock-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
-        .lock-card {
-            border-radius: 12px;
-            padding: 18px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .lock-card.locked {
-            background: #dc2626;
-            color: white;
-            box-shadow: 0 2px 8px rgba(220,38,38,0.3);
-        }
-        
-        .lock-card.unlocked {
-            background: #10b981;
-            color: white;
-            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
-        }
-        
-        .lock-card:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.05);
-        }
-        
-        /* Class selector for upload */
-        .class-selector {
+        .class-options {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 10px;
         }
         
-        .class-option {
-            padding: 8px;
+        .class-btn {
+            padding: 12px;
             background: #f8f9fa;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            text-align: center;
             cursor: pointer;
+            text-align: center;
             font-weight: 600;
-            font-size: 13px;
+            transition: all 0.2s;
         }
         
-        .class-option.active {
+        .class-btn:hover {
+            border-color: #667eea;
+        }
+        
+        .class-btn.active {
             background: #667eea;
             color: white;
             border-color: #667eea;
@@ -177,17 +182,22 @@
         .folder-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 15px 0;
+            gap: 15px;
+            margin-top: 20px;
         }
         
         .folder-btn {
-            padding: 12px;
+            padding: 15px;
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             cursor: pointer;
             text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .folder-btn:hover {
+            transform: translateY(-2px);
         }
         
         .folder-btn.active {
@@ -204,72 +214,58 @@
             color: white;
         }
         
+        .folder-btn h4 {
+            margin-bottom: 5px;
+        }
+        
+        .upload-section {
+            margin-top: 20px;
+        }
+        
         .upload-area {
             border: 2px dashed #d1d5db;
             border-radius: 10px;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
-            background: #fafafa;
-            margin: 10px 0;
+            background: white;
+            margin: 20px 0;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+        }
+        
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #667eea;
         }
         
         .file-list {
-            max-height: 120px;
+            max-height: 150px;
             overflow-y: auto;
+            margin-top: 10px;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 8px;
-            font-size: 12px;
-        }
-        
-        /* NOTEPAD - ORIGINAL PATTERN PRESERVED */
-        .notepad-container {
-            margin-top: 15px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .notepad-header {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: white;
-            padding: 10px 15px;
-        }
-        
-        .notepad-textarea {
-            width: 100%;
-            height: 220px;
-            padding: 15px;
-            border: none;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            line-height: 1.5;
-            resize: vertical;
-            background: #fafafa;
-        }
-        
-        .notepad-textarea:focus {
-            outline: none;
+            padding: 10px;
             background: white;
         }
         
-        .notepad-footer {
-            background: #fffef0;
-            padding: 8px 15px;
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
+        .file-item {
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
         }
         
         .progress-container {
-            margin: 15px 0;
+            margin: 20px 0;
             display: none;
         }
         
         .progress-bar {
             width: 100%;
-            height: 25px;
+            height: 30px;
             background: #e0e0e0;
             border-radius: 15px;
             overflow: hidden;
@@ -279,47 +275,255 @@
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             width: 0%;
+            transition: width 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .notepad-container {
+            margin-top: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .notepad-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 15px;
+        }
+        
+        .notepad-header h3 {
+            font-size: 16px;
+        }
+        
+        .notepad-textarea {
+            width: 100%;
+            height: 300px;
+            padding: 20px;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            line-height: 1.6;
+            resize: vertical;
+            background: #fafafa;
+            letter-spacing: 1px;
+            caret-color: #667eea;
+        }
+        
+        .notepad-textarea:focus {
+            outline: none;
+            background: white;
+        }
+        
+        .notepad-footer {
+            background: #fffef0;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .print-header {
+            display: none;
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #43e97b;
+            text-align: center;
+        }
+        
+        .print-header h2 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 18px;
+        }
+        
+        .action-buttons {
+            margin-top: 30px;
         }
         
         .upload-btn {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
             border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
         }
         
         .upload-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
         
-        .date-picker {
-            display: flex;
+        .acknowledgement-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
         
-        /* Config Editor Styles */
+        .acknowledgement-box {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .acknowledgement-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .acknowledgement-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .acknowledgement-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        
+        .acknowledgement-close {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .acknowledgement-close:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        /* Admin Lock Box Styles */
+        .config-icon {
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #4B0082;
+            transition: all 0.3s ease;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .config-icon:hover {
+            transform: rotate(15deg);
+            background: #e0e0e0;
+        }
+        
+        .admin-lock-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        
+        .admin-lock-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 300px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .admin-lock-content h3 {
+            margin-bottom: 20px;
+            color: #4B0082;
+        }
+        
+        .admin-lock-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .admin-lock-content button {
+            padding: 10px 25px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .admin-lock-btn {
+            background: #4B0082;
+            color: white;
+        }
+        
+        .admin-cancel-btn {
+            background: #dc3545;
+            color: white;
+        }
+        
+        /* Subject Input Row */
         .subject-input-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 10px;
+            margin-bottom: 10px;
             align-items: center;
         }
         
-        .subject-input-row select, .subject-input-row input {
-            padding: 6px;
+        .subject-input-row select {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .subject-input-row input {
+            flex: 1;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
@@ -327,518 +531,978 @@
         .remove-subject-btn {
             background: #dc3545;
             color: white;
-            padding: 4px 10px;
+            padding: 8px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
         
-        .status-message {
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: none;
-            font-size: 12px;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
-        .status-success { background: #d1fae5; color: #065f46; }
-        .status-error { background: #fee2e2; color: #991b1b; }
-        
-        .admin-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .admin-modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            min-width: 300px;
+        @media (max-width: 768px) {
+            .class-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .folder-options {
+                grid-template-columns: 1fr;
+            }
+            .date-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .notepad-textarea {
+                font-size: 16px;
+            }
+            .token-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
         
-        .acknowledgement-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-        }
-        
-        .acknowledgement-box {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            max-width: 400px;
-        }
-        
-        @media (max-width: 1200px) {
-            .dashboard { grid-template-columns: 1fr; }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .header, .date-section, .token-section, .class-options, .folder-options, 
+            .upload-area, .action-buttons,
+            .notepad-header, .notepad-footer, .upload-btn, .file-list,
+            .progress-container {
+                display: none !important;
+            }
+            .print-header {
+                display: block !important;
+            }
+            .notepad-container {
+                border: none;
+                margin-top: 0;
+            }
+            .notepad-textarea {
+                border: none;
+                height: auto;
+                font-size: 12px;
+                background: white;
+                padding: 20px;
+                font-family: 'Courier New', monospace;
+                line-height: 1.8;
+            }
+            .main-content {
+                padding: 0;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>🔐 LFJC Admin Portal | Lock Manager + Upload + Config</h1>
-        <p>Red = Locked (students blocked) | Green = Unlocked | Config editor included</p>
-    </div>
-    
-    <div class="token-bar">
-        <div class="token-input-group">
-            <label>🔑 GitHub Token:</label>
-            <input type="password" id="githubToken" class="token-input" placeholder="ghp_...">
-            <button id="saveTokenBtn" class="token-save-btn">Save Token</button>
+    <div class="container">
+        <div class="header">
+            <h1>📚 LFJC Teacher Portal</h1>
+            <p>Upload questions to /questions/ folder | Answer keys to class folder root</p>
         </div>
-        <div>
-            <button id="adminAccessBtn" class="admin-access-btn">🔓 Admin Access</button>
-            <span id="adminBadge" class="admin-badge" style="display:none;">👑 Admin Mode</span>
-        </div>
-        <span id="tokenStatus" style="font-size:12px;"></span>
-    </div>
-    
-    <div class="dashboard">
-        <!-- COLUMN 1: Class Lock Manager (FULL COLOR CARDS) -->
-        <div class="card">
-            <div class="card-header">🔒 Class Lock Manager <span id="lockStats" style="float:right;"></span></div>
-            <div class="card-body">
-                <div id="lockGridContainer" class="lock-grid">Loading...</div>
-                <div id="lockStatusMsg" class="status-message"></div>
+        
+        <div class="token-section">
+            <div class="token-container">
+                <label>🔑 Access Token:</label>
+                <input type="password" id="accessToken" class="token-input" placeholder="Enter your access token">
+                <button id="saveTokenBtn" class="token-save-btn">💾 Save Token</button>
+                <span id="tokenStatus" class="token-status"></span>
             </div>
         </div>
         
-        <!-- COLUMN 2: Upload Manager -->
-        <div class="card">
-            <div class="card-header">📤 Upload Content</div>
-            <div class="card-body">
+        <div class="date-section">
+            <div class="date-container">
                 <div class="date-picker">
-                    <label>📅 Date:</label>
+                    <label>📅 Select Date:</label>
                     <input type="date" id="selectedDate">
                 </div>
-                <div class="class-selector" id="uploadClassSelector"></div>
-                <div class="folder-options">
-                    <div class="folder-btn questions active" data-folder="questions"><h4>📝 Questions</h4><p>Upload images</p></div>
-                    <div class="folder-btn answers" data-folder="answers"><h4>✅ Answers</h4><p>Type answer key</p></div>
-                </div>
-                <div id="questionUploadSection">
-                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                        <div class="upload-icon" style="font-size:30px;">📂</div>
-                        <p>Click or drag images</p>
-                    </div>
-                    <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
-                    <div class="file-list" id="fileList"></div>
-                </div>
-                <div id="notepadContainer" class="notepad-container" style="display:none;">
-                    <div class="notepad-header"><h3>Answer Key - Class <span id="notepadClass">1D</span></h3></div>
-                    <textarea id="notepadContent" class="notepad-textarea" placeholder="Type letters (A-D) or numbers - 5 per row auto-enter"></textarea>
-                    <div class="notepad-footer"><div>Total answers: <span id="answerCount">0</span></div><div>5 per row (auto-enter)</div></div>
-                </div>
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar"><div class="progress-fill" id="progressFill">0%</div></div>
-                    <p id="progressText" style="font-size:11px; text-align:center; margin-top:5px;"></p>
-                </div>
-                <button class="upload-btn" id="uploadBtn" disabled>📤 Upload Files</button>
-                <div id="uploadStatusMsg" class="status-message"></div>
+            </div>
+            <div class="date-note">
+                ⓘ Date shows as DD/MM/YY in header and filename
             </div>
         </div>
         
-        <!-- COLUMN 3: Exam Configuration Editor (FULL ORIGINAL) -->
-        <div class="card">
-            <div class="card-header">⚙️ Exam Configuration Editor <span style="font-size:11px;">(Admin only)</span></div>
-            <div class="card-body">
-                <div id="configClassSelector" style="margin-bottom:15px;">
-                    <label>📚 Select Class:</label>
-                    <select id="configClass" style="width:100%; padding:8px; margin-top:5px;">
-                        <option value="1D">1D</option><option value="1M">1M</option><option value="1N">1N</option>
-                        <option value="1E">1E</option><option value="2D">2D</option><option value="2M">2M</option>
-                        <option value="2N">2N</option><option value="2E">2E</option>
+        <div class="main-content">
+            <div class="form-group">
+                <label>Select Class</label>
+                <div class="class-options">
+                    <div class="class-btn active" data-class="1D">Class 1D</div>
+                    <div class="class-btn" data-class="1M">Class 1M</div>
+                    <div class="class-btn" data-class="1N">Class 1N</div>
+                    <div class="class-btn" data-class="1E">Class 1E</div>
+                    <div class="class-btn" data-class="2D">Class 2D</div>
+                    <div class="class-btn" data-class="2M">Class 2M</div>
+                    <div class="class-btn" data-class="2N">Class 2N</div>
+                    <div class="class-btn" data-class="2E">Class 2E</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Select Upload Type</label>
+                <div class="folder-options">
+                    <div class="folder-btn questions active" data-folder="questions">
+                        <h4>📝 Questions</h4>
+                        <p>Upload to /questions/ folder (keeps original filename)</p>
+                    </div>
+                    <div class="folder-btn answers" data-folder="answers">
+                        <h4>✅ Answers</h4>
+                        <p>Type and upload answer key (5 per row auto-enter)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="upload-section" id="questionUploadSection">
+                <label id="folderLabel">Select Question Images</label>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📂</div>
+                    <h3>Click to Browse Files</h3>
+                    <p>or drag and drop files here</p>
+                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files keep their original names (10.png stays 10.png)</p>
+                </div>
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                <div class="file-list" id="fileList"></div>
+            </div>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+                <p id="progressText" style="text-align: center; margin-top: 10px; font-size: 12px;"></p>
+            </div>
+            
+            <div class="notepad-container" id="notepadContainer" style="display: none;">
+                <div class="notepad-header">
+                    <h3>Answer Key - Class <span id="notepadClass">1D</span></h3>
+                </div>
+                <textarea class="notepad-textarea" id="notepadContent" placeholder="Type letters (A-D) or numbers - 5 per row auto-enter"></textarea>
+                <div class="notepad-footer">
+                    <div>Total answers: <span id="answerCount">0</span></div>
+                    <div>5 per row (auto-enter)</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="upload-btn" id="uploadBtn" disabled>
+                    📤 Upload Files
+                </button>
+            </div>
+            
+            <!-- ========== EXAM CONFIGURATION EDITOR ========== -->
+            <div class="config-editor" style="background: #f8f9fa; border: 2px solid #4B0082; border-radius: 10px; padding: 20px; margin-top: 30px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <h3 style="color: #4B0082;">⚙️ Exam Configuration Editor</h3>
+                    <div class="config-icon" id="configLockIcon" title="Admin Access">✏️</div>
+                </div>
+                
+                <div id="configClassSelector" style="display: none; margin-bottom: 15px;">
+                    <label style="font-weight: bold;">📚 Select Class to Configure:</label>
+                    <select id="configClass" style="width: 100%; padding: 8px; margin-top: 5px;">
+                        <option value="1D">Class 1D</option>
+                        <option value="1M">Class 1M</option>
+                        <option value="1N">Class 1N</option>
+                        <option value="1E">Class 1E</option>
+                        <option value="2D">Class 2D</option>
+                        <option value="2M">Class 2M</option>
+                        <option value="2N">Class 2N</option>
+                        <option value="2E">Class 2E</option>
                     </select>
-                    <button id="loadConfigBtn" style="background:#17a2b8; color:white; margin-top:8px; padding:6px 12px; border:none; border-radius:6px;">Load Current Config</button>
+                    <button id="loadConfigBtn" style="background: #17a2b8; color: white; margin-top: 5px; padding: 5px 15px;">Load Current Config</button>
                 </div>
-                <div id="configForm" style="display:none;">
-                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:15px;">
-                        <div><label>⏱️ Duration (min):</label><input type="number" id="configDuration" style="width:100%; padding:6px;"></div>
-                        <div><label>✅ Correct Mark:</label><input type="number" id="configCorrectMark" step="0.5" style="width:100%; padding:6px;"></div>
-                        <div><label>❌ Wrong Mark:</label><input type="number" id="configWrongMark" step="0.5" style="width:100%; padding:6px;"></div>
+                
+                <div id="configForm" style="display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                        <div>
+                            <label>⏱️ Duration (minutes):</label>
+                            <input type="number" id="configDuration" style="width: 100%; padding: 8px;">
+                        </div>
+                        <div>
+                            <label>✅ Correct Answer Mark:</label>
+                            <input type="number" id="configCorrectMark" step="0.5" style="width: 100%; padding: 8px;">
+                        </div>
+                        <div>
+                            <label>❌ Wrong Answer Mark:</label>
+                            <input type="number" id="configWrongMark" step="0.5" style="width: 100%; padding: 8px;">
+                        </div>
                     </div>
-                    <div style="margin-bottom:15px;">
-                        <label>📚 Subjects & Questions:</label>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: bold;">📚 Subjects & Questions:</label>
                         <div id="subjectsConfigList"></div>
-                        <button id="addSubjectConfigBtn" style="background:#28a745; color:white; margin-top:5px; padding:5px 12px; border:none; border-radius:6px;">+ Add Subject</button>
+                        <button id="addSubjectConfigBtn" style="background: #28a745; color: white; margin-top: 5px; padding: 5px 15px;">+ Add Subject</button>
                     </div>
-                    <div style="margin-bottom:15px;">
-                        <label>📤 Active Subjects for Forms:</label>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: bold;">📤 Active Subjects for Forms:</label>
                         <div id="activeSubjectsConfigList"></div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Active subjects will be sent to their respective forms</p>
                     </div>
-                    <button id="saveConfigBtn" style="background:#4B0082; color:white; padding:10px; width:100%; border:none; border-radius:8px;">💾 Save Configuration</button>
+                    
+                    <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 10px 20px; width: 100%;">💾 Save Configuration</button>
                 </div>
-                <div id="configMessage" class="status-message"></div>
+                
+                <div id="configMessage" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+            </div>
+            <!-- ========== END CONFIG EDITOR ========== -->
+            
+        </div>
+    </div>
+    
+    <!-- Admin Password Lock Box -->
+    <div id="adminLockBox" class="admin-lock-box">
+        <div class="admin-lock-content">
+            <h3>🔒 Admin Access Required</h3>
+            <input type="password" id="adminLockPassword" placeholder="Enter admin password">
+            <div>
+                <button id="adminLockSubmit" class="admin-lock-btn">Verify</button>
+                <button id="adminLockCancel" class="admin-cancel-btn">Cancel</button>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Admin Modal -->
-<div id="adminModal" class="admin-modal">
-    <div class="admin-modal-content">
-        <h3>🔒 Admin Access Required</h3>
-        <input type="password" id="adminPassword" placeholder="Enter admin password">
-        <button id="adminConfirmBtn" style="background:#4B0082; color:white; padding:8px 20px; margin:5px;">Verify</button>
-        <button id="adminCancelBtn" style="background:#6c757d; color:white;">Cancel</button>
+    
+    <div class="acknowledgement-overlay" id="acknowledgementOverlay">
+        <div class="acknowledgement-box">
+            <div class="acknowledgement-icon" id="ackIcon">✅</div>
+            <div class="acknowledgement-title" id="ackTitle">Upload Successful!</div>
+            <div class="acknowledgement-message" id="ackMessage"></div>
+            <button class="acknowledgement-close" onclick="closeAcknowledgement()">Continue</button>
+        </div>
     </div>
-</div>
 
-<div id="ackOverlay" class="acknowledgement-overlay">
-    <div class="acknowledgement-box"><div style="font-size:50px;" id="ackIcon">✅</div><h3 id="ackTitle">Success</h3><p id="ackMessage"></p><button onclick="closeAck()" style="background:#667eea; color:white; border:none; padding:8px 20px; border-radius:8px;">OK</button></div>
-</div>
-
-<script>
-    // ==================== CONFIGURATION ====================
-    const REPO_OWNER = 'lfjccbt';
-    const ADMIN_PASSWORD = 'admin2025';
-    const CLASSES = ['1D','1M','1N','1E','2D','2M','2N','2E'];
-    const CLASS_REPO_MAP = { "1D":"1D","1M":"1M","1N":"1N","1E":"1E","2D":"2D","2M":"2M","2N":"2N","2E":"2E" };
-    
-    let isAdmin = false;
-    let githubToken = localStorage.getItem('github_token') || '';
-    let classLocks = {};
-    let selectedClass = "1D";
-    let selectedFolder = "questions";
-    let selectedFiles = [];
-    
-    // DOM Elements
-    const tokenInput = document.getElementById('githubToken');
-    const saveTokenBtn = document.getElementById('saveTokenBtn');
-    const adminAccessBtn = document.getElementById('adminAccessBtn');
-    const adminBadge = document.getElementById('adminBadge');
-    const adminModal = document.getElementById('adminModal');
-    const lockGridContainer = document.getElementById('lockGridContainer');
-    const uploadClassSelector = document.getElementById('uploadClassSelector');
-    const notepadContainer = document.getElementById('notepadContainer');
-    const notepadContent = document.getElementById('notepadContent');
-    const notepadClass = document.getElementById('notepadClass');
-    const answerCountSpan = document.getElementById('answerCount');
-    const questionUploadSection = document.getElementById('questionUploadSection');
-    const fileInput = document.getElementById('fileInput');
-    const fileListDiv = document.getElementById('fileList');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const selectedDateInput = document.getElementById('selectedDate');
-    
-    if (githubToken) { tokenInput.value = githubToken; tokenStatus.innerText = '✓ Token loaded'; tokenStatus.style.color = '#10b981'; }
-    
-    saveTokenBtn.onclick = () => {
-        const token = tokenInput.value.trim();
-        if (token.startsWith('ghp_') && token.length > 20) {
-            localStorage.setItem('github_token', token);
-            githubToken = token;
-            tokenStatus.innerText = '✓ Token saved!';
+    <script>
+        // ========== CONFIGURATION ==========
+        const REPO_OWNER = 'lfjccbt';
+        const ADMIN_PASSWORD = 'admin2025';
+        
+        const CLASS_REPO = {
+            "1D": "1D", "1M": "1M", "1N": "1N", "1E": "1E",
+            "2D": "2D", "2M": "2M", "2N": "2N", "2E": "2E"
+        };
+        
+        const BACKUP_URL = 'https://script.google.com/macros/s/AKfycbyThPtuipOZaSO98GqhBdGmvNRqkq944RIoqdnG-rETNSGaszvO1V4quafSuE8Qx1c/exec';
+        const BACKUP_FOLDER_ID = '1nCzzuK_QT19j5UcUAcYykMTyBWB_Ux9H';
+        
+        // ========== STATE ==========
+        let selectedFiles = [];
+        let selectedClass = "1D";
+        let selectedFolder = "questions";
+        let accessToken = localStorage.getItem('access_token') || '';
+        
+        // ========== DOM ELEMENTS ==========
+        const tokenInput = document.getElementById('accessToken');
+        const saveTokenBtn = document.getElementById('saveTokenBtn');
+        const tokenStatus = document.getElementById('tokenStatus');
+        
+        if (accessToken) {
+            tokenInput.value = accessToken;
+            tokenStatus.textContent = '✓ Token saved';
             tokenStatus.style.color = '#10b981';
-            showStatus('Token saved!', 'success', 'lockStatusMsg');
-            loadLocks();
-        } else { tokenStatus.innerText = '❌ Invalid token'; tokenStatus.style.color = '#ef4444'; }
-    };
-    
-    adminAccessBtn.onclick = () => adminModal.style.display = 'flex';
-    document.getElementById('adminConfirmBtn').onclick = () => {
-        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
-            isAdmin = true;
-            adminBadge.style.display = 'inline-block';
-            adminModal.style.display = 'none';
-            showStatus('Admin mode active! You can now modify locks & config.', 'success', 'lockStatusMsg');
-            loadLocks();
-            document.getElementById('configForm').style.display = 'block';
-        } else { alert('Wrong password!'); document.getElementById('adminPassword').value = ''; }
-    };
-    document.getElementById('adminCancelBtn').onclick = () => adminModal.style.display = 'none';
-    
-    // ==================== LOCK MANAGER (FULL COLOR CARDS) ====================
-    async function loadLocks() {
-        if (!githubToken) { lockGridContainer.innerHTML = '<div class="lock-card locked" style="grid-column:span 2;">⚠️ Enter token first</div>'; return; }
-        lockGridContainer.innerHTML = '<div style="grid-column:span 2; text-align:center;">Loading...</div>';
-        try {
-            const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`, { headers: { 'Authorization': `token ${githubToken}` } });
-            if (res.ok) classLocks = JSON.parse(atob((await res.json()).content));
-            else if (res.status === 404) { CLASSES.forEach(c => classLocks[c] = false); await saveLocksToGitHub(true); }
-            else throw new Error();
-            renderLockGrid();
-            updateUploadClassSelector();
-        } catch(e) { CLASSES.forEach(c => classLocks[c] = false); renderLockGrid(); }
-    }
-    
-    async function saveLocksToGitHub(isNew=false) {
-        if (!githubToken) return false;
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(classLocks, null, 2))));
-        try {
-            let sha = null;
-            const check = await fetch(`https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`, { headers: { 'Authorization': `token ${githubToken}` } });
-            if (check.ok) sha = (await check.json()).sha;
-            const save = await fetch(`https://api.github.com/repos/${REPO_OWNER}/lock/contents/locks.json`, {
-                method: 'PUT', headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'Update locks', content, sha, branch: 'main' })
-            });
-            return save.ok;
-        } catch(e) { return false; }
-    }
-    
-    async function toggleLock(cls) {
-        if (!isAdmin) { showStatus('Admin access required!', 'error', 'lockStatusMsg'); return; }
-        classLocks[cls] = !classLocks[cls];
-        if (await saveLocksToGitHub()) {
-            renderLockGrid();
-            updateUploadClassSelector();
-            showStatus(`${cls} is now ${classLocks[cls] ? 'LOCKED' : 'UNLOCKED'}`, 'success', 'lockStatusMsg');
-        } else {
-            classLocks[cls] = !classLocks[cls];
-            renderLockGrid();
-            showStatus('Save failed!', 'error', 'lockStatusMsg');
         }
-    }
-    
-    function renderLockGrid() {
-        const lockedCount = Object.values(classLocks).filter(v=>v===true).length;
-        document.getElementById('lockStats').innerHTML = `${lockedCount}/${CLASSES.length} locked`;
-        let html = '';
-        for (const cls of CLASSES) {
-            const locked = classLocks[cls] || false;
-            html += `<div class="lock-card ${locked ? 'locked' : 'unlocked'}" onclick="toggleLock('${cls}')">📚 ${cls}</div>`;
-        }
-        lockGridContainer.innerHTML = html;
-    }
-    
-    // ==================== UPLOAD MANAGER ====================
-    function updateUploadClassSelector() {
-        let html = '';
-        for (const cls of CLASSES) {
-            const locked = classLocks[cls] || false;
-            html += `<div class="class-option ${selectedClass === cls ? 'active' : ''}" data-class="${cls}">${cls} ${locked ? '🔒' : '🔓'}</div>`;
-        }
-        uploadClassSelector.innerHTML = html;
-        document.querySelectorAll('.class-option').forEach(el => {
-            el.onclick = () => {
-                const cls = el.dataset.class;
-                document.querySelectorAll('.class-option').forEach(c => c.classList.remove('active'));
-                el.classList.add('active');
-                selectedClass = cls;
-                notepadClass.innerText = cls;
-                updateUploadButtonState();
-            };
-        });
-    }
-    
-    document.querySelectorAll('.folder-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            selectedFolder = btn.dataset.folder;
-            if (selectedFolder === 'answers') {
-                questionUploadSection.style.display = 'none';
-                notepadContainer.style.display = 'block';
-                updateAnswerCount();
+        
+        saveTokenBtn.addEventListener('click', () => {
+            const token = tokenInput.value.trim();
+            if (token.length > 10) {
+                localStorage.setItem('access_token', token);
+                accessToken = token;
+                tokenStatus.textContent = '✓ Token saved successfully!';
+                tokenStatus.style.color = '#10b981';
+                setTimeout(() => { tokenStatus.textContent = ''; }, 3000);
+                updateUploadButton();
             } else {
-                questionUploadSection.style.display = 'block';
-                notepadContainer.style.display = 'none';
+                tokenStatus.textContent = '❌ Invalid token';
+                tokenStatus.style.color = '#ef4444';
+                setTimeout(() => { tokenStatus.textContent = ''; }, 3000);
             }
-            updateUploadButtonState();
-        };
-    });
-    
-    // Notepad pattern (5 per row auto-enter)
-    notepadContent.addEventListener('keydown', function(e) {
-        if ([8,9,13,16,17,18,20,27,37,38,39,40,46].includes(e.keyCode)) return true;
-        if (!/^[a-dA-D0-9]$/.test(e.key) && e.key.length === 1) { e.preventDefault(); return false; }
-    });
-    notepadContent.addEventListener('input', function() {
-        let val = notepadContent.value.toUpperCase().replace(/[^ABCD0-9\n]/g, '');
-        const lines = val.split('\n');
-        let formatted = [];
-        for (let line of lines) {
-            if (!line) { formatted.push(''); continue; }
-            if (/^[ABCD0-9]+$/.test(line)) {
-                for (let i = 0; i < line.length; i += 5) formatted.push(line.substring(i, i+5));
-            } else formatted.push(line);
-        }
-        const newVal = formatted.join('\n');
-        if (newVal !== val) notepadContent.value = newVal;
-        updateAnswerCount();
-        updateUploadButtonState();
-    });
-    
-    function updateAnswerCount() {
-        const content = notepadContent.value;
-        const letters = content.match(/[ABCD]/g) || [];
-        const numbers = content.match(/[0-9]+/g) || [];
-        answerCountSpan.innerText = letters.length + numbers.length;
-    }
-    
-    fileInput.onchange = (e) => {
-        selectedFiles = Array.from(e.target.files);
-        fileListDiv.innerHTML = selectedFiles.map(f => `<div>📄 ${f.name}</div>`).join('');
-        updateUploadButtonState();
-    };
-    
-    function updateUploadButtonState() {
-        const hasToken = githubToken && githubToken.length > 10;
-        uploadBtn.disabled = !hasToken || (selectedFolder === 'questions' ? selectedFiles.length === 0 : notepadContent.value.trim().length === 0);
-    }
-    
-    async function startUpload() {
-        if (!githubToken) { showStatus('No token!', 'error', 'uploadStatusMsg'); return; }
-        const classRepo = CLASS_REPO_MAP[selectedClass];
-        const progressDiv = document.getElementById('progressContainer');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        uploadBtn.disabled = true;
-        progressDiv.style.display = 'block';
-        try {
-            if (selectedFolder === 'questions') {
-                for (let i=0; i<selectedFiles.length; i++) {
-                    const f = selectedFiles[i];
-                    progressFill.style.width = `${Math.round((i/selectedFiles.length)*100)}%`;
-                    progressText.textContent = `Uploading ${f.name}...`;
-                    const base64 = await fileToBase64(f);
-                    await uploadToGitHub(classRepo, `questions/${f.name}`, base64);
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            initializeDatePicker();
+            updateUI();
+            updateUploadButton();
+            setupAdminLock();
+        });
+        
+        function setupAdminLock() {
+            const lockIcon = document.getElementById('configLockIcon');
+            const lockBox = document.getElementById('adminLockBox');
+            const lockSubmit = document.getElementById('adminLockSubmit');
+            const lockCancel = document.getElementById('adminLockCancel');
+            const lockPassword = document.getElementById('adminLockPassword');
+            
+            lockIcon.addEventListener('click', () => {
+                lockBox.style.display = 'flex';
+                lockPassword.value = '';
+                lockPassword.focus();
+            });
+            
+            lockSubmit.addEventListener('click', () => {
+                if (lockPassword.value === ADMIN_PASSWORD) {
+                    lockBox.style.display = 'none';
+                    document.getElementById('configClassSelector').style.display = 'block';
+                    document.getElementById('configForm').style.display = 'block';
+                    loadConfig();
+                } else {
+                    alert('Incorrect password!');
+                    lockPassword.value = '';
+                    lockPassword.focus();
                 }
-                showAck('Upload Success', `${selectedFiles.length} questions uploaded`, true);
-                selectedFiles = []; fileInput.value = ''; fileListDiv.innerHTML = '';
-            } else {
-                const content = notepadContent.value.trim();
-                if (!content) throw new Error('Empty key');
-                const base64 = btoa(unescape(encodeURIComponent(content)));
-                await uploadToGitHub(classRepo, 'answer-key.txt', base64);
-                showAck('Answer Key Uploaded', `${selectedClass} answer key saved`, true);
-                notepadContent.value = ''; updateAnswerCount();
-            }
-        } catch(err) { showAck('Upload Failed', err.message, false); }
-        finally { progressDiv.style.display = 'none'; uploadBtn.disabled = false; updateUploadButtonState(); }
-    }
-    
-    async function uploadToGitHub(repo, path, base64) {
-        let sha = null;
-        const check = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repo}/contents/${path}`, { headers: { 'Authorization': `token ${githubToken}` } });
-        if (check.ok) sha = (await check.json()).sha;
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${repo}/contents/${path}`, {
-            method: 'PUT', headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: `Upload ${path}`, content: base64, sha, branch: 'main' })
-        });
-        if (!res.ok) throw new Error('Upload failed');
-    }
-    
-    function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-    
-    uploadBtn.onclick = startUpload;
-    selectedDateInput.value = new Date().toISOString().split('T')[0];
-    
-    // ==================== CONFIG EDITOR (FULL ORIGINAL) ====================
-    let currentConfig = null;
-    async function loadConfig() {
-        if (!isAdmin) { showStatus('Admin access required for config!', 'error', 'configMessage'); return; }
-        const cls = document.getElementById('configClass').value;
-        const token = githubToken;
-        if (!token) { showStatus('No token', 'error', 'configMessage'); return; }
-        try {
-            const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${cls}/main/config.json?t=${Date.now()}`);
-            if (res.ok) currentConfig = await res.json();
-            else currentConfig = { duration: 180, correctMark: 1, wrongMark: 0, activeForForms: [], subjects: [] };
-            displayConfig();
-            showStatus(`Config loaded for ${cls}`, 'success', 'configMessage');
-        } catch(e) { showStatus('Error loading config', 'error', 'configMessage'); }
-    }
-    
-    function displayConfig() {
-        document.getElementById('configDuration').value = currentConfig.duration;
-        document.getElementById('configCorrectMark').value = currentConfig.correctMark;
-        document.getElementById('configWrongMark').value = currentConfig.wrongMark;
-        const subjectsDiv = document.getElementById('subjectsConfigList');
-        subjectsDiv.innerHTML = '';
-        const subjectOptions = ['MATHS','PHYSICS','CHEMISTRY','BOTANY','ZOOLOGY','MATHS_A','MATHS_B','BZ'];
-        if (!currentConfig.subjects.length) currentConfig.subjects = [{ name:"MATHS", questions:80, numerical:0 },{ name:"PHYSICS", questions:40, numerical:0 },{ name:"CHEMISTRY", questions:40, numerical:0 }];
-        currentConfig.subjects.forEach((sub, idx) => {
-            const div = document.createElement('div'); div.className = 'subject-input-row';
-            div.innerHTML = `<select class="subj-name" data-idx="${idx}">${subjectOptions.map(o=>`<option ${sub.name===o?'selected':''}>${o}</option>`).join('')}</select>
-                <input type="number" value="${sub.questions}" class="subj-q" data-idx="${idx}" placeholder="Q">
-                <input type="number" value="${sub.numerical}" class="subj-num" data-idx="${idx}" placeholder="Num">
-                <button class="remove-subject-btn" data-idx="${idx}">✖</button>`;
-            subjectsDiv.appendChild(div);
-        });
-        document.querySelectorAll('.subj-name').forEach(s=>s.onchange=function(){currentConfig.subjects[this.dataset.idx].name=this.value; updateActiveCheckboxes();});
-        document.querySelectorAll('.subj-q').forEach(i=>i.onchange=function(){currentConfig.subjects[this.dataset.idx].questions=parseInt(this.value)||0;});
-        document.querySelectorAll('.subj-num').forEach(i=>i.onchange=function(){currentConfig.subjects[this.dataset.idx].numerical=parseInt(this.value)||0;});
-        document.querySelectorAll('.remove-subject-btn').forEach(b=>b.onclick=function(){currentConfig.subjects.splice(parseInt(this.dataset.idx),1); displayConfig();});
-        updateActiveCheckboxes();
-    }
-    
-    function updateActiveCheckboxes() {
-        if (!currentConfig.activeForForms) currentConfig.activeForForms = [];
-        const container = document.getElementById('activeSubjectsConfigList');
-        container.innerHTML = '<div style="display:flex; flex-wrap:wrap; gap:8px;">';
-        currentConfig.subjects.forEach(s => {
-            const checked = currentConfig.activeForForms.includes(s.name);
-            container.innerHTML += `<label><input type="checkbox" class="active-subj" data-subj="${s.name}" ${checked?'checked':''}> ${s.name}</label>`;
-        });
-        container.innerHTML += '</div>';
-        document.querySelectorAll('.active-subj').forEach(cb => cb.onchange = function() {
-            const subj = this.dataset.subj;
-            if (this.checked) { if(!currentConfig.activeForForms.includes(subj)) currentConfig.activeForForms.push(subj); }
-            else currentConfig.activeForForms = currentConfig.activeForForms.filter(s=>s!==subj);
-        });
-    }
-    
-    async function saveConfig() {
-        if (!isAdmin) { showStatus('Admin required', 'error', 'configMessage'); return; }
-        const cls = document.getElementById('configClass').value;
-        const configData = {
-            duration: parseInt(document.getElementById('configDuration').value)||180,
-            correctMark: parseFloat(document.getElementById('configCorrectMark').value)||1,
-            wrongMark: parseFloat(document.getElementById('configWrongMark').value)||0,
-            activeForForms: currentConfig.activeForForms||[],
-            subjects: currentConfig.subjects
-        };
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData,null,2))));
-        try {
-            let sha = null;
-            const check = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${cls}/contents/config.json`, { headers: { 'Authorization': `token ${githubToken}` } });
-            if (check.ok) sha = (await check.json()).sha;
-            const save = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${cls}/contents/config.json`, {
-                method: 'PUT', headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Update config for ${cls}`, content, sha, branch: 'main' })
             });
-            if (save.ok) showStatus(`✅ Config saved to ${cls}`, 'success', 'configMessage');
-            else throw new Error();
-        } catch(e) { showStatus('Save failed', 'error', 'configMessage'); }
-    }
-    
-    document.getElementById('loadConfigBtn').onclick = loadConfig;
-    document.getElementById('saveConfigBtn').onclick = saveConfig;
-    document.getElementById('addSubjectConfigBtn').onclick = () => { currentConfig.subjects.push({ name:"NEW_SUBJECT", questions:40, numerical:0 }); displayConfig(); };
-    
-    function showStatus(msg, type, elId) { const d=document.getElementById(elId); d.textContent=msg; d.className=`status-message status-${type}`; d.style.display='block'; setTimeout(()=>d.style.display='none',4000); }
-    function showAck(title, msg, ok) { document.getElementById('ackIcon').innerText=ok?'✅':'❌'; document.getElementById('ackTitle').innerText=title; document.getElementById('ackMessage').innerText=msg; document.getElementById('ackOverlay').style.display='flex'; }
-    window.closeAck = () => document.getElementById('ackOverlay').style.display='none';
-    window.toggleLock = toggleLock;
-    
-    if (githubToken) loadLocks();
-    updateUploadClassSelector();
-</script>
+            
+            lockCancel.addEventListener('click', () => {
+                lockBox.style.display = 'none';
+            });
+            
+            lockPassword.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') lockSubmit.click();
+            });
+        }
+        
+        function initializeDatePicker() {
+            const dateInput = document.getElementById('selectedDate');
+            const today = new Date();
+            dateInput.value = formatDateForInput(today);
+            dateInput.addEventListener('change', updatePrintHeader);
+        }
+        
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDateForDisplay(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year.slice(-2)}`;
+        }
+        
+        function updatePrintHeader() {
+            const notepadContainer = document.getElementById('notepadContainer');
+            const selectedDate = document.getElementById('selectedDate').value;
+            const shortDate = formatDateForDisplay(selectedDate);
+            const existingHeader = document.getElementById('printHeader');
+            if (existingHeader) existingHeader.remove();
+            const printHeader = document.createElement('div');
+            printHeader.id = 'printHeader';
+            printHeader.className = 'print-header';
+            printHeader.innerHTML = `<h2>LFJC ${selectedClass} - ${shortDate} KEY</h2>`;
+            notepadContainer.insertBefore(printHeader, notepadContainer.firstChild);
+        }
+        
+        async function uploadToClassFolder(classFolder, filePath, base64Content) {
+            const token = accessToken;
+            if (!token) throw new Error('No access token');
+            
+            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classFolder}/contents/${filePath}`, {
+                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+            });
+            
+            let sha = null;
+            if (checkRes.ok) {
+                const data = await checkRes.json();
+                sha = data.sha;
+            }
+            
+            const uploadRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classFolder}/contents/${filePath}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: `Upload ${filePath}`,
+                    content: base64Content,
+                    sha: sha,
+                    branch: 'main'
+                })
+            });
+            
+            if (!uploadRes.ok) {
+                const error = await uploadRes.json();
+                throw new Error(`Upload error: ${error.message || uploadRes.status}`);
+            }
+            return true;
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function setupEventListeners() {
+            document.querySelectorAll('.class-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedClass = this.dataset.class;
+                    document.getElementById('notepadClass').textContent = selectedClass;
+                    updatePrintHeader();
+                    updateUI();
+                });
+            });
+            
+            document.querySelectorAll('.folder-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedFolder = this.dataset.folder;
+                    updateUI();
+                    if (selectedFolder === 'answers') {
+                        const textarea = document.getElementById('notepadContent');
+                        textarea.value = '';
+                        updateAnswerCount();
+                        updatePrintHeader();
+                    }
+                });
+            });
+            
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                selectedFiles = Array.from(e.target.files);
+                updateFileList();
+                updateUploadButton();
+            });
+            
+            const textarea = document.getElementById('notepadContent');
+            
+            textarea.addEventListener('keydown', function(e) {
+                if ([8, 9, 13, 16, 17, 18, 20, 27, 37, 38, 39, 40, 46].includes(e.keyCode)) {
+                    return true;
+                }
+                const allowedKeys = /^[a-dA-D0-9]$/;
+                if (!allowedKeys.test(e.key) && e.key.length === 1) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            textarea.addEventListener('input', function(e) {
+                const cursorPos = textarea.selectionStart;
+                let value = textarea.value;
+                value = value.toUpperCase();
+                value = value.replace(/[^ABCD0-9\n]/g, '');
+                
+                const textBeforeCursor = value.substring(0, cursorPos);
+                const linesBefore = textBeforeCursor.split('\n');
+                const currentLine = linesBefore[linesBefore.length - 1];
+                
+                const typedChar = e.data ? e.data.toUpperCase() : '';
+                if (/^[ABCD0-9]$/.test(typedChar)) {
+                    const charsInLine = currentLine.replace(/[^ABCD0-9]/g, '').length;
+                    if (charsInLine === 5) {
+                        const beforeText = value.substring(0, cursorPos);
+                        const afterText = value.substring(cursorPos);
+                        value = beforeText + '\n' + afterText;
+                        textarea.value = value;
+                        const newCursorPos = cursorPos + 1;
+                        setTimeout(() => {
+                            textarea.setSelectionRange(newCursorPos, newCursorPos);
+                        }, 0);
+                        updateAnswerCount();
+                        updateUploadButton();
+                        return;
+                    }
+                }
+                
+                const lines = value.split('\n');
+                let formattedLines = [];
+                for (let line of lines) {
+                    if (line.length === 0) {
+                        formattedLines.push('');
+                        continue;
+                    }
+                    if (/^[ABCD0-9]+$/.test(line)) {
+                        for (let i = 0; i < line.length; i += 5) {
+                            const chunk = line.substring(i, i + 5);
+                            if (chunk) formattedLines.push(chunk);
+                        }
+                    } else {
+                        formattedLines.push(line);
+                    }
+                }
+                
+                const newValue = formattedLines.join('\n');
+                if (newValue !== value) {
+                    textarea.value = newValue;
+                    let newCursorPos = cursorPos;
+                    if (newValue.length !== value.length) {
+                        newCursorPos = Math.max(0, Math.min(cursorPos, newValue.length));
+                    }
+                    setTimeout(() => {
+                        textarea.setSelectionRange(newCursorPos, newCursorPos);
+                    }, 0);
+                }
+                updateAnswerCount();
+                updateUploadButton();
+            });
+            
+            const dropArea = document.querySelector('.upload-area');
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#667eea';
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#d1d5db';
+                selectedFiles = Array.from(e.dataTransfer.files);
+                updateFileList();
+                updateUploadButton();
+            });
+        }
+        
+        function updateUI() {
+            const notepadContainer = document.getElementById('notepadContainer');
+            const questionSection = document.getElementById('questionUploadSection');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const folderLabel = document.getElementById('folderLabel');
+            
+            if (selectedFolder === 'answers') {
+                notepadContainer.style.display = 'block';
+                questionSection.style.display = 'none';
+                uploadBtn.textContent = '📤 Upload Answer Key';
+                folderLabel.textContent = 'Type Answer Key Below (5 per row auto-enter)';
+                updatePrintHeader();
+            } else {
+                notepadContainer.style.display = 'none';
+                questionSection.style.display = 'block';
+                uploadBtn.textContent = '📤 Upload Questions';
+                folderLabel.textContent = 'Select Question Images (keeps original filenames)';
+            }
+            updateUploadButton();
+        }
+        
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            if (selectedFiles.length > 0) {
+                fileList.innerHTML = selectedFiles.map(file => 
+                    `<div class="file-item">📄 ${file.name} (${formatSize(file.size)})</div>`
+                ).join('');
+            } else {
+                fileList.innerHTML = '';
+            }
+        }
+        
+        function updateUploadButton() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const hasToken = accessToken && accessToken.length > 10;
+            if (!hasToken) {
+                uploadBtn.disabled = true;
+                return;
+            }
+            if (selectedFolder === 'questions') {
+                uploadBtn.disabled = selectedFiles.length === 0;
+            } else {
+                uploadBtn.disabled = document.getElementById('notepadContent').value.trim().length === 0;
+            }
+        }
+        
+        function updateAnswerCount() {
+            const content = document.getElementById('notepadContent').value;
+            const letters = content.match(/[ABCD]/g) || [];
+            const numberSequences = content.match(/[0-9]+/g) || [];
+            document.getElementById('answerCount').textContent = letters.length + numberSequences.length;
+        }
+        
+        function showAcknowledgement(title, message, isSuccess) {
+            const overlay = document.getElementById('acknowledgementOverlay');
+            const icon = document.getElementById('ackIcon');
+            const ackTitle = document.getElementById('ackTitle');
+            const ackMessage = document.getElementById('ackMessage');
+            icon.textContent = isSuccess ? '✅' : '❌';
+            ackTitle.textContent = title;
+            ackMessage.textContent = message;
+            overlay.style.display = 'flex';
+            setTimeout(() => closeAcknowledgement(), 5000);
+        }
+        
+        function closeAcknowledgement() {
+            document.getElementById('acknowledgementOverlay').style.display = 'none';
+        }
+        
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        async function startUpload() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            if (!accessToken || accessToken.length < 10) {
+                showAcknowledgement('No Token', 'Please save your access token first.', false);
+                return;
+            }
+            
+            const classFolder = CLASS_REPO[selectedClass];
+            if (!classFolder) {
+                showAcknowledgement('Error', `No class folder for ${selectedClass}`, false);
+                return;
+            }
+            
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Uploading...';
+            progressContainer.style.display = 'block';
+            
+            try {
+                if (selectedFolder === 'questions') {
+                    await uploadQuestions(progressFill, progressText, classFolder);
+                } else {
+                    await uploadAnswerKey(progressFill, progressText, classFolder);
+                }
+            } catch (error) {
+                showAcknowledgement('Upload Failed', error.message, false);
+            } finally {
+                progressContainer.style.display = 'none';
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '📤 Upload Files';
+            }
+        }
+        
+        async function uploadQuestions(progressFill, progressText, classFolder) {
+            if (selectedFiles.length === 0) throw new Error('No files selected');
+            
+            let success = 0;
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const percent = Math.round((i / selectedFiles.length) * 100);
+                progressFill.style.width = `${percent}%`;
+                progressFill.textContent = `${percent}%`;
+                progressText.textContent = `Uploading ${file.name}... (${i+1}/${selectedFiles.length})`;
+                
+                const base64Content = await fileToBase64(file);
+                const filePath = `questions/${file.name}`;
+                await uploadToClassFolder(classFolder, filePath, base64Content);
+                success++;
+            }
+            
+            progressFill.style.width = '100%';
+            showAcknowledgement('Upload Successful!', `✅ ${success} files uploaded to ${classFolder}/questions/\n📁 Files keep original names\n🔄 Exam will update in 1-2 minutes`, true);
+            selectedFiles = [];
+            document.getElementById('fileInput').value = '';
+            updateFileList();
+            updateUploadButton();
+        }
+        
+        async function uploadAnswerKey(progressFill, progressText, classFolder) {
+            const textarea = document.getElementById('notepadContent');
+            let content = textarea.value.trim();
+            const selectedDate = document.getElementById('selectedDate').value;
+            const section = selectedClass;
+            
+            if (content.length === 0) throw new Error('Answer key is empty');
+            
+            progressFill.style.width = '30%';
+            progressFill.textContent = '30%';
+            progressText.textContent = 'Processing answer key...';
+            
+            const lines = content.split('\n').filter(line => line.trim() !== '');
+            const tokens = [];
+            
+            for (let line of lines) {
+                let i = 0;
+                while (i < line.length) {
+                    if (line[i].match(/[ABCD]/)) {
+                        tokens.push(line[i]);
+                        i++;
+                    } else if (line[i].match(/[0-9]/)) {
+                        let num = '';
+                        while (i < line.length && line[i].match(/[0-9]/)) {
+                            num += line[i];
+                            i++;
+                        }
+                        tokens.push(num);
+                    } else {
+                        i++;
+                    }
+                }
+            }
+            
+            const [year, month, day] = selectedDate.split('-');
+            const shortDate = `${day}/${month}/${year.slice(-2)}`;
+            const filenameDate = `${day}-${month}-${year.slice(-2)}`;
+            
+            let pdfContent = `LFJC ${section} - ${shortDate} KEY\n`;
+            pdfContent += `${'─'.repeat(50)}\n\n`;
+            
+            let line = '';
+            for (let i = 0; i < tokens.length; i++) {
+                line += `${i+1})${tokens[i]} `;
+                if ((i + 1) % 10 === 0) {
+                    pdfContent += line + '\n';
+                    line = '';
+                }
+            }
+            if (line) pdfContent += line + '\n';
+            
+            pdfContent += `\n${'─'.repeat(50)}`;
+            pdfContent += `\nTotal Questions: ${tokens.length}`;
+            
+            const base64Content = btoa(unescape(encodeURIComponent(content)));
+            
+            progressFill.style.width = '70%';
+            progressFill.textContent = '70%';
+            progressText.textContent = 'Uploading to class folder...';
+            
+            const filePath = `answer-key.txt`;
+            await uploadToClassFolder(classFolder, filePath, base64Content);
+            
+            progressFill.style.width = '90%';
+            progressFill.textContent = '90%';
+            progressText.textContent = 'Sending backup...';
+            
+            try {
+                await fetch(BACKUP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        section: selectedClass,
+                        filenameDate: filenameDate,
+                        content: pdfContent,
+                        folderId: BACKUP_FOLDER_ID
+                    })
+                });
+                console.log('✅ Backup sent');
+            } catch (e) {
+                console.log('Backup optional:', e);
+            }
+            
+            progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            
+            showAcknowledgement('Answer Key Uploaded!', `✅ ${selectedClass} | ${shortDate}\n📊 ${tokens.length} answers\n📁 answer-key.txt\n\n📤 Backup sent`, true);
+            
+            textarea.value = '';
+            updateAnswerCount();
+            updateUploadButton();
+        }
+        
+        document.getElementById('uploadBtn').onclick = startUpload;
+        
+        // ========== CONFIG EDITOR ==========
+        (function() {
+            let currentConfig = null;
+            
+            function getToken() {
+                return document.getElementById('accessToken').value.trim();
+            }
+            
+            async function loadConfig() {
+                const classValue = document.getElementById('configClass').value;
+                const token = getToken();
+                if (!token) {
+                    alert('Please enter access token first');
+                    return;
+                }
+                
+                const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${classValue}/main/config.json?t=${Date.now()}`;
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        currentConfig = await response.json();
+                    } else {
+                        currentConfig = {
+                            duration: 180,
+                            correctMark: 1,
+                            wrongMark: 0,
+                            activeForForms: [],
+                            subjects: []
+                        };
+                    }
+                    displayConfig();
+                    showConfigMessage('Config loaded for ' + classValue, 'success');
+                } catch(e) {
+                    showConfigMessage('Error loading config: ' + e.message, 'error');
+                }
+            }
+            
+            function displayConfig() {
+                document.getElementById('configDuration').value = currentConfig.duration;
+                document.getElementById('configCorrectMark').value = currentConfig.correctMark;
+                document.getElementById('configWrongMark').value = currentConfig.wrongMark;
+                
+                const subjectsDiv = document.getElementById('subjectsConfigList');
+                subjectsDiv.innerHTML = '';
+                
+                const subjectOptions = ['MATHS', 'PHYSICS', 'CHEMISTRY', 'BOTANY', 'ZOOLOGY', 'MATHS_A', 'MATHS_B', 'BZ'];
+                
+                if (currentConfig.subjects.length === 0) {
+                    currentConfig.subjects = [
+                        { name: "MATHS", questions: 80, numerical: 0 },
+                        { name: "PHYSICS", questions: 40, numerical: 0 },
+                        { name: "CHEMISTRY", questions: 40, numerical: 0 }
+                    ];
+                }
+                
+                currentConfig.subjects.forEach((subject, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'subject-input-row';
+                    div.innerHTML = `
+                        <select class="subject-name-select" data-idx="${idx}">
+                            ${subjectOptions.map(opt => `<option value="${opt}" ${subject.name === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                        <input type="number" value="${subject.questions}" class="subject-questions" data-idx="${idx}" placeholder="Questions">
+                        <input type="number" value="${subject.numerical}" class="subject-numerical" data-idx="${idx}" placeholder="Numerical">
+                        <button class="remove-subject-btn" data-idx="${idx}">✖</button>
+                    `;
+                    subjectsDiv.appendChild(div);
+                });
+                
+                document.querySelectorAll('.subject-name-select').forEach(select => {
+                    select.addEventListener('change', function() {
+                        currentConfig.subjects[this.dataset.idx].name = this.value;
+                        updateActiveSubjectsCheckboxes();
+                    });
+                });
+                
+                document.querySelectorAll('.subject-questions').forEach(inp => {
+                    inp.addEventListener('change', function() {
+                        currentConfig.subjects[this.dataset.idx].questions = parseInt(this.value) || 0;
+                    });
+                });
+                
+                document.querySelectorAll('.subject-numerical').forEach(inp => {
+                    inp.addEventListener('change', function() {
+                        currentConfig.subjects[this.dataset.idx].numerical = parseInt(this.value) || 0;
+                    });
+                });
+                
+                document.querySelectorAll('.remove-subject-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        currentConfig.subjects.splice(parseInt(this.dataset.idx), 1);
+                        displayConfig();
+                    });
+                });
+                
+                updateActiveSubjectsCheckboxes();
+            }
+            
+            function updateActiveSubjectsCheckboxes() {
+                if (!currentConfig.activeForForms) currentConfig.activeForForms = [];
+                
+                const activeDiv = document.getElementById('activeSubjectsConfigList');
+                activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">';
+                
+                currentConfig.subjects.forEach(subject => {
+                    const isActive = currentConfig.activeForForms.includes(subject.name);
+                    activeDiv.innerHTML += `
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" class="active-checkbox-config" data-subject="${subject.name}" ${isActive ? 'checked' : ''}>
+                            ${subject.name}
+                        </label>
+                    `;
+                });
+                activeDiv.innerHTML += '</div>';
+                
+                document.querySelectorAll('.active-checkbox-config').forEach(cb => {
+                    cb.addEventListener('change', function() {
+                        const subject = this.dataset.subject;
+                        if (this.checked) {
+                            if (!currentConfig.activeForForms.includes(subject)) {
+                                currentConfig.activeForForms.push(subject);
+                            }
+                        } else {
+                            currentConfig.activeForForms = currentConfig.activeForForms.filter(s => s !== subject);
+                        }
+                    });
+                });
+            }
+            
+            document.getElementById('addSubjectConfigBtn').addEventListener('click', () => {
+                if (!currentConfig.subjects) currentConfig.subjects = [];
+                currentConfig.subjects.push({ name: "NEW_SUBJECT", questions: 40, numerical: 0 });
+                displayConfig();
+            });
+            
+            async function saveConfig() {
+                const token = getToken();
+                if (!token || token.length < 10) {
+                    showConfigMessage('Please enter a valid access token', 'error');
+                    return;
+                }
+                
+                const classValue = document.getElementById('configClass').value;
+                const configData = {
+                    duration: parseInt(document.getElementById('configDuration').value) || 180,
+                    correctMark: parseFloat(document.getElementById('configCorrectMark').value) || 1,
+                    wrongMark: parseFloat(document.getElementById('configWrongMark').value) || 0,
+                    activeForForms: currentConfig.activeForForms || [],
+                    subjects: currentConfig.subjects
+                };
+                
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData, null, 2))));
+                
+                try {
+                    const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classValue}/contents/config.json`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    
+                    let sha = null;
+                    if (checkRes.ok) {
+                        const data = await checkRes.json();
+                        sha = data.sha;
+                    }
+                    
+                    const saveRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${classValue}/contents/config.json`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `Update exam config for ${classValue}`,
+                            content: content,
+                            sha: sha,
+                            branch: 'main'
+                        })
+                    });
+                    
+                    if (saveRes.ok) {
+                        showConfigMessage(`✅ Config saved to ${classValue}/config.json`, 'success');
+                    } else {
+                        throw new Error('Save failed');
+                    }
+                } catch(e) {
+                    showConfigMessage('Error saving: ' + e.message, 'error');
+                }
+            }
+            
+            function showConfigMessage(msg, type) {
+                const msgDiv = document.getElementById('configMessage');
+                msgDiv.textContent = msg;
+                msgDiv.style.display = 'block';
+                msgDiv.style.background = type === 'error' ? '#f8d7da' : (type === 'success' ? '#d4edda' : '#d1ecf1');
+                msgDiv.style.color = type === 'error' ? '#721c24' : (type === 'success' ? '#155724' : '#0c5460');
+                setTimeout(() => msgDiv.style.display = 'none', 5000);
+            }
+            
+            document.getElementById('loadConfigBtn').addEventListener('click', loadConfig);
+            document.getElementById('saveConfigBtn').addEventListener('click', saveConfig);
+        })();
+        
+    </script>
 </body>
 </html>
