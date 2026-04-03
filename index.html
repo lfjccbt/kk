@@ -661,7 +661,7 @@
                 <div class="folder-options">
                     <div class="folder-btn questions active" data-folder="questions">
                         <h4>📝 Questions</h4>
-                        <p>Upload to /questions/ folder (keeps original filename)</p>
+                        <p>Upload to exam folder </p>
                     </div>
                     <div class="folder-btn answers" data-folder="answers">
                         <h4>✅ Answers</h4>
@@ -676,7 +676,6 @@
                     <div class="upload-icon">📂</div>
                     <h3>Click to Browse Files</h3>
                     <p>or drag and drop files here</p>
-                    <p style="font-size: 12px; margin-top: 10px; color: #666;">Files keep their original names (10.png stays 10.png)</p>
                 </div>
                 <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
                 <div class="file-list" id="fileList"></div>
@@ -1080,7 +1079,7 @@
                 notepadContainer.style.display = 'none';
                 questionSection.style.display = 'block';
                 uploadBtn.textContent = '📤 Upload Questions';
-                folderLabel.textContent = 'Select Question Images (keeps original filenames)';
+                
             }
             updateUploadButton();
         }
