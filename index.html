@@ -748,12 +748,7 @@
                         <label style="font-weight: bold;">📚 Subjects & Questions:</label>
                         <div id="subjectsConfigList"></div>
                         <button id="addSubjectConfigBtn" style="background: #28a745; color: white; margin-top: 5px; padding: 5px 15px;">+ Add Subject</button>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <label style="font-weight: bold;">📤 Active Subjects for Forms:</label>
-                        <div id="activeSubjectsConfigList"></div>
-                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Active subjects will be sent to their respective forms</p>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">All subjects are automatically active for Google Forms</p>
                     </div>
                     
                     <button id="saveConfigBtn" style="background: #4B0082; color: white; padding: 10px 20px; width: 100%;">💾 Save Configuration</button>
@@ -1328,7 +1323,6 @@
                             duration: 180,
                             correctMark: 1,
                             wrongMark: 0,
-                            activeForForms: [],
                             subjects: []
                         };
                     }
@@ -1374,7 +1368,6 @@
                 document.querySelectorAll('.subject-name-select').forEach(select => {
                     select.addEventListener('change', function() {
                         currentConfig.subjects[this.dataset.idx].name = this.value;
-                        updateActiveSubjectsCheckboxes();
                     });
                 });
                 
@@ -1396,39 +1389,6 @@
                         displayConfig();
                     });
                 });
-                
-                updateActiveSubjectsCheckboxes();
-            }
-            
-            function updateActiveSubjectsCheckboxes() {
-                if (!currentConfig.activeForForms) currentConfig.activeForForms = [];
-                
-                const activeDiv = document.getElementById('activeSubjectsConfigList');
-                activeDiv.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">';
-                
-                currentConfig.subjects.forEach(subject => {
-                    const isActive = currentConfig.activeForForms.includes(subject.name);
-                    activeDiv.innerHTML += `
-                        <label style="display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" class="active-checkbox-config" data-subject="${subject.name}" ${isActive ? 'checked' : ''}>
-                            ${subject.name}
-                        </label>
-                    `;
-                });
-                activeDiv.innerHTML += '</div>';
-                
-                document.querySelectorAll('.active-checkbox-config').forEach(cb => {
-                    cb.addEventListener('change', function() {
-                        const subject = this.dataset.subject;
-                        if (this.checked) {
-                            if (!currentConfig.activeForForms.includes(subject)) {
-                                currentConfig.activeForForms.push(subject);
-                            }
-                        } else {
-                            currentConfig.activeForForms = currentConfig.activeForForms.filter(s => s !== subject);
-                        }
-                    });
-                });
             }
             
             document.getElementById('addSubjectConfigBtn').addEventListener('click', () => {
@@ -1445,11 +1405,15 @@
                 }
                 
                 const classValue = document.getElementById('configClass').value;
+                
+                // Auto-generate activeForForms from subjects list (all subjects are active)
+                const activeForForms = currentConfig.subjects.map(s => s.name);
+                
                 const configData = {
                     duration: parseInt(document.getElementById('configDuration').value) || 180,
                     correctMark: parseFloat(document.getElementById('configCorrectMark').value) || 1,
                     wrongMark: parseFloat(document.getElementById('configWrongMark').value) || 0,
-                    activeForForms: currentConfig.activeForForms || [],
+                    activeForForms: activeForForms,
                     subjects: currentConfig.subjects
                 };
                 
@@ -1481,7 +1445,7 @@
                     });
                     
                     if (saveRes.ok) {
-                        showConfigMessage(`✅ Config saved to ${classValue}/config.json`, 'success');
+                        showConfigMessage(`✅ Config saved to ${classValue}/config.json\n📤 Active subjects: ${activeForForms.join(', ')}`, 'success');
                     } else {
                         throw new Error('Save failed');
                     }
