@@ -1443,7 +1443,7 @@
                     });
                     
                     if (saveRes.ok) {
-                        showConfigMessage(`✅ Config saved to ${classValue}/config.json\n📤 Active subjects: ${activeForForms.join(', ')}`, 'success');
+                        showConfigMessage(`✅ Config saved to ${classValue}\n📤 Active subjects: ${activeForForms.join(', ')}`, 'success');
                     } else {
                         throw new Error('Save failed');
                     }
